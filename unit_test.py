@@ -152,5 +152,50 @@ class TestScraperGetAllReviews(unittest.TestCase):
         assert len(reviews) > 0
 
 
+class TestScraperDetectRecommended(unittest.TestCase):
+    '''
+    Each review has a link to a thumbs up or thumbs down. 
+    Check a link to see it detect "Recommended"
+    '''
+
+    def test(self):
+        image_link_string = '<img height="40" src="http://store.akamai.steamstatic.com/public/shared/images/userreviews/icon_thumbsUp_v6.png" width="40"></img></div>'
+        assert scraper.get_recommendation_from_image_link(image_link_string) == 'Recommended'
+
+class TestScraperDetectNotRecommended(unittest.TestCase):
+    '''
+    Each review has a link to a thumbs up or thumbs down. 
+    Check a link to see it detect "Not recommended"
+    '''
+
+    def test(self):
+        image_link_string = '<img height="40" src="http://store.akamai.steamstatic.com/public/shared/images/userreviews/icon_thumbsDown_v6.png" width="40"></img></div>'
+        assert scraper.get_recommendation_from_image_link(image_link_string) == 'Not Recommended'
+
+
+class TestScraperNoRecommendationDetected(unittest.TestCase):
+    '''
+    Each review has a link to a thumbs up or thumbs down. 
+    Check to see a link not contain the data we need
+    '''
+
+    def test(self):
+        image_link_string = '<img height="40" src="http://store.akamai.steamstatic.com/public/shared/images/userreviews/icon_thumbsSideways_v6.png" width="40"></img></div>'
+        assert scraper.get_recommendation_from_image_link(image_link_string) == 'Issue detecting recommendation'
+
+
+class TestScraperReviewFormatting(unittest.TestCase):
+    '''
+    Test scraper is returning the data from each box that we need
+    '''
+
+    def test(self):
+        request_response = scraper.scrape_app_page('http://store.steampowered.com/app/', 80)
+        reviews = scraper.get_reviews_on_page(request_response)
+
+        assert len(reviews[0]['user_recommendation']) > 0
+        assert len(reviews[0]['user_review_text']) > 0
+        assert len(reviews[0]['user_name']) > 0
+
 if __name__ == '__main__':
     unittest.main()
