@@ -23,5 +23,10 @@ class TestCreateDB(unittest.TestCase):
             response_no_data = response.fetchone()
             assert response_no_data is None
 
+    def tearDown(self):
+        db_location = 'database_test.db'
+        with sqlite3.connect(db_location, timeout=20) as db:
+            database_manager.drop_reviews_table(db)
+
 if __name__ == '__main__':
     unittest.main()
