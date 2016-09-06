@@ -52,12 +52,13 @@ class TestInsertOneData(unittest.TestCase):
             user_recommendation = 'great'
             user_review_text = 'great'
             user_review_date = 'yesterday'
-            database_manager.insert_data_reviews_table(db, url, date_scraped, user_recommendation, user_review_text, user_review_date)
+            classified = 0
+            database_manager.insert_data_reviews_table(db, url, date_scraped, classified, user_recommendation, user_review_text, user_review_date)
 
             cur = db.cursor()
             response = cur.execute("SELECT * FROM steam_reviews;")
             response_one_data = response.fetchone()
-            assert response_one_data == (1, 'url', 'today', 'great', 'great', 'yesterday')
+            assert response_one_data == (1, 'url', 'today', 0, 'great', 'great', 'yesterday')
 
     def tearDown(self):
         db_location = 'database_test.db'
@@ -84,14 +85,15 @@ class TestInsertTwoData(unittest.TestCase):
             user_recommendation = 'great'
             user_review_text = 'great'
             user_review_date = 'yesterday'
-            database_manager.insert_data_reviews_table(db, url, date_scraped, user_recommendation, user_review_text, user_review_date)
-            database_manager.insert_data_reviews_table(db, url, date_scraped, user_recommendation, user_review_text, user_review_date)
+            classified = False
+            database_manager.insert_data_reviews_table(db, url, date_scraped, classified, user_recommendation, user_review_text, user_review_date)
+            database_manager.insert_data_reviews_table(db, url, date_scraped, classified, user_recommendation, user_review_text, user_review_date)
 
             cur = db.cursor()
             response = cur.execute("SELECT * FROM steam_reviews;")
             response_all_data = response.fetchall()
-            assert response_all_data[0] == (1, 'url', 'today', 'great', 'great', 'yesterday')
-            assert response_all_data[1] == (2, 'url', 'today', 'great', 'great', 'yesterday')
+            assert response_all_data[0] == (1, 'url', 'today', 0, 'great', 'great', 'yesterday')
+            assert response_all_data[1] == (2, 'url', 'today', 0, 'great', 'great', 'yesterday')
 
     def tearDown(self):
         db_location = 'database_test.db'
