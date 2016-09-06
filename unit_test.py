@@ -51,14 +51,14 @@ class TestInsertOneData(unittest.TestCase):
             date_scraped = 'today'
             user_recommendation = 'great'
             user_review_text = 'great'
-            user_review_date = 'yesterday'
+            user_name = 'Bob'
             classified = 0
-            database_manager.insert_data_reviews_table(db, url, date_scraped, classified, user_recommendation, user_review_text, user_review_date)
+            database_manager.insert_data_reviews_table(db, url, date_scraped, classified, user_recommendation, user_review_text, user_name)
 
             cur = db.cursor()
             response = cur.execute("SELECT * FROM steam_reviews;")
             response_one_data = response.fetchone()
-            assert response_one_data == (1, 'url', 'today', 0, 'great', 'great', 'yesterday')
+            assert response_one_data == (1, 'url', 'today', 0, 'great', 'great', 'Bob')
 
     def tearDown(self):
         db_location = 'database_test.db'
@@ -84,16 +84,16 @@ class TestInsertTwoData(unittest.TestCase):
             date_scraped = 'today'
             user_recommendation = 'great'
             user_review_text = 'great'
-            user_review_date = 'yesterday'
+            user_name = 'Bob'
             classified = 0
-            database_manager.insert_data_reviews_table(db, url, date_scraped, classified, user_recommendation, user_review_text, user_review_date)
-            database_manager.insert_data_reviews_table(db, url, date_scraped, classified, user_recommendation, user_review_text, user_review_date)
+            database_manager.insert_data_reviews_table(db, url, date_scraped, classified, user_recommendation, user_review_text, user_name)
+            database_manager.insert_data_reviews_table(db, url, date_scraped, classified, user_recommendation, user_review_text, user_name)
 
             cur = db.cursor()
             response = cur.execute("SELECT * FROM steam_reviews;")
             response_all_data = response.fetchall()
-            assert response_all_data[0] == (1, 'url', 'today', 0, 'great', 'great', 'yesterday')
-            assert response_all_data[1] == (2, 'url', 'today', 0, 'great', 'great', 'yesterday')
+            assert response_all_data[0] == (1, 'url', 'today', 0, 'great', 'great', 'Bob')
+            assert response_all_data[1] == (2, 'url', 'today', 0, 'great', 'great', 'Bob')
 
     def tearDown(self):
         db_location = 'database_test.db'
@@ -130,7 +130,6 @@ class TestScrapedPageHasReviews(unittest.TestCase):
         assert scraper.page_has_reviews(request_response) == True
 
 
-
 class TestScrapedPageHasNoReviews(unittest.TestCase):
     '''
     When an invalid request is made, Steam sends us to a different page, these pages won't have reviews.
@@ -140,6 +139,18 @@ class TestScrapedPageHasNoReviews(unittest.TestCase):
     def test(self):
         request_response = scraper.scrape_app_page('http://store.steampowered.com/app/', 's')
         assert scraper.page_has_reviews(request_response) == False
+
+
+class TestScraperGetAllReviews(unittest.TestCase):
+    '''
+    Get all reviews on this page and put those in an array, we'll need them later.
+    '''
+
+    def test(self):
+        request_response = scraper.scrape_app_page('http://store.steampowered.com/app/', 80)
+        reviews = scraper.get_reviews_on_page(request_response)
+        assert len(reviews) > 0
+
 
 if __name__ == '__main__':
     unittest.main()
