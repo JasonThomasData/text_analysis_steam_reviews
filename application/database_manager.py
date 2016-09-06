@@ -4,7 +4,7 @@ import sqlite3
 
 def create_reviews_table(db):
     cur = db.cursor()
-    cur.execute('CREATE TABLE IF NOT EXISTS steam_reviews (id serial PRIMARY KEY, url text, date_scraped text, user_recommendation text, user_review_text text, user_review_date text);')
+    cur.execute('CREATE TABLE IF NOT EXISTS steam_reviews (id INTEGER PRIMARY KEY AUTOINCREMENT, url TEXT, date_scraped TEXT, user_recommendation TEXT, user_review_text TEXT, user_review_date TEXT);')
 
 def drop_reviews_table(db):
     cur = db.cursor()

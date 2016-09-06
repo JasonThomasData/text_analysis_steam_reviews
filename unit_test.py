@@ -4,6 +4,10 @@ import unittest
 import sqlite3
 from application import database_manager
 
+"""
+These first tests are for the database_manager module. We need the DB before scraping any data.
+"""
+
 class TestCreateDB(unittest.TestCase):
     '''
     Tests the function to create a DB in sqlite3 is working.
@@ -28,9 +32,10 @@ class TestCreateDB(unittest.TestCase):
         with sqlite3.connect(db_location, timeout=20) as db:
             database_manager.drop_reviews_table(db)
 
-class TestInsertData(unittest.TestCase):
+
+class TestInsertOneData(unittest.TestCase):
     '''
-    Tests we can insert data into this db.
+    Tests we can insert one piece of data into this db.
     '''
 
     def setUp(self):
@@ -50,14 +55,49 @@ class TestInsertData(unittest.TestCase):
             database_manager.insert_data_reviews_table(db, url, date_scraped, user_recommendation, user_review_text, user_review_date)
 
             cur = db.cursor()
-            response = cur.execute("SELECT 1 FROM steam_reviews LIMIT 1;")
+            response = cur.execute("SELECT * FROM steam_reviews;")
             response_one_data = response.fetchone()
-            assert len(response_one_data) == 1
+            assert response_one_data == (1, 'url', 'today', 'great', 'great', 'yesterday')
 
     def tearDown(self):
         db_location = 'database_test.db'
         with sqlite3.connect(db_location, timeout=20) as db:
             database_manager.drop_reviews_table(db)
+
+
+class TestInsertTwoData(unittest.TestCase):
+    '''
+    Tests we can insert two pieces of data into this db.
+    '''
+
+    def setUp(self):
+        db_location = 'database_test.db'
+        with sqlite3.connect(db_location, timeout=20) as db:
+            database_manager.create_reviews_table(db)
+
+    def test(self):
+        db_location = 'database_test.db'
+        with sqlite3.connect(db_location, timeout=20) as db:
+
+            url = 'url'
+            date_scraped = 'today'
+            user_recommendation = 'great'
+            user_review_text = 'great'
+            user_review_date = 'yesterday'
+            database_manager.insert_data_reviews_table(db, url, date_scraped, user_recommendation, user_review_text, user_review_date)
+            database_manager.insert_data_reviews_table(db, url, date_scraped, user_recommendation, user_review_text, user_review_date)
+
+            cur = db.cursor()
+            response = cur.execute("SELECT * FROM steam_reviews;")
+            response_all_data = response.fetchall()
+            assert response_all_data[0] == (1, 'url', 'today', 'great', 'great', 'yesterday')
+            assert response_all_data[1] == (2, 'url', 'today', 'great', 'great', 'yesterday')
+
+    def tearDown(self):
+        db_location = 'database_test.db'
+        with sqlite3.connect(db_location, timeout=20) as db:
+            database_manager.drop_reviews_table(db)
+
 
 
 if __name__ == '__main__':
