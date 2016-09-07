@@ -48,17 +48,18 @@ class TestInsertOneData(unittest.TestCase):
         with sqlite3.connect(db_location, timeout=20) as db:
 
             url = 'url'
+            app_num = 300000
             date_scraped = 'today'
             user_recommendation = 'great'
             user_review_text = 'great'
             user_name = 'Bob'
             classified = 0
-            database_manager.insert_data_reviews_table(db, url, date_scraped, classified, user_recommendation, user_review_text, user_name)
+            database_manager.insert_data_reviews_table(db, url, app_num, date_scraped, classified, user_recommendation, user_review_text, user_name)
 
             cur = db.cursor()
             response = cur.execute("SELECT * FROM steam_reviews;")
             response_one_data = response.fetchone()
-            assert response_one_data == (1, 'url', 'today', 0, 'great', 'great', 'Bob')
+            assert response_one_data == (1, 'url', 300000, 'today', 0, 'great', 'great', 'Bob')
 
     def tearDown(self):
         db_location = 'database_test.db'
@@ -81,24 +82,26 @@ class TestInsertTwoData(unittest.TestCase):
         with sqlite3.connect(db_location, timeout=20) as db:
 
             url = 'url'
+            app_num = 300000
             date_scraped = 'today'
             user_recommendation = 'great'
             user_review_text = 'great'
             user_name = 'Bob'
             classified = 0
-            database_manager.insert_data_reviews_table(db, url, date_scraped, classified, user_recommendation, user_review_text, user_name)
-            database_manager.insert_data_reviews_table(db, url, date_scraped, classified, user_recommendation, user_review_text, user_name)
+            database_manager.insert_data_reviews_table(db, url, app_num, date_scraped, classified, user_recommendation, user_review_text, user_name)
+            database_manager.insert_data_reviews_table(db, url, app_num, date_scraped, classified, user_recommendation, user_review_text, user_name)
 
             cur = db.cursor()
             response = cur.execute("SELECT * FROM steam_reviews;")
             response_all_data = response.fetchall()
-            assert response_all_data[0] == (1, 'url', 'today', 0, 'great', 'great', 'Bob')
-            assert response_all_data[1] == (2, 'url', 'today', 0, 'great', 'great', 'Bob')
+            assert response_all_data[0] == (1, 'url', 300000, 'today', 0, 'great', 'great', 'Bob')
+            assert response_all_data[1] == (2, 'url', 300000, 'today', 0, 'great', 'great', 'Bob')
 
     def tearDown(self):
         db_location = 'database_test.db'
         with sqlite3.connect(db_location, timeout=20) as db:
             database_manager.drop_reviews_table(db)
+
 
 class TestRetrieveData(unittest.TestCase):
     '''
@@ -115,15 +118,16 @@ class TestRetrieveData(unittest.TestCase):
         with sqlite3.connect(db_location, timeout=20) as db:
 
             url = 'url'
+            app_num = 300000
             date_scraped = 'today'
             user_recommendation = 'Recommended'
             user_review_text = 'great'
             user_name = 'Bob'
             classified = 0
-            database_manager.insert_data_reviews_table(db, url, date_scraped, classified, user_recommendation, user_review_text, user_name)
+            database_manager.insert_data_reviews_table(db, url, app_num, date_scraped, classified, user_recommendation, user_review_text, user_name)
 
             response = database_manager.retrieve_data_reviews_table(db, 'Recommended', 0)
-            assert response == (1, 'url', 'today', 0, 'Recommended', 'great', 'Bob')
+            assert response == (1, 'url', 300000, 'today', 0, 'Recommended', 'great', 'Bob')
 
     def tearDown(self):
         db_location = 'database_test.db'
@@ -133,7 +137,8 @@ class TestRetrieveData(unittest.TestCase):
 
 class TestRetrieveDataFail1(unittest.TestCase):
     '''
-    The previous test works, but this returns None because the WHERE condition in the function is false, because of recommendation.
+    The previous test works, but this returns None because the WHERE condition in the function is false, 
+    because of recommendation.
     '''
 
     def setUp(self):
@@ -146,12 +151,13 @@ class TestRetrieveDataFail1(unittest.TestCase):
         with sqlite3.connect(db_location, timeout=20) as db:
 
             url = 'url'
+            app_num = 300000
             date_scraped = 'today'
             user_recommendation = 'Not Recommended'
             user_review_text = 'great'
             user_name = 'Bob'
             classified = 0
-            database_manager.insert_data_reviews_table(db, url, date_scraped, classified, user_recommendation, user_review_text, user_name)
+            database_manager.insert_data_reviews_table(db, url, app_num, date_scraped, classified, user_recommendation, user_review_text, user_name)
 
             response = database_manager.retrieve_data_reviews_table(db, 'Recommended', 0)
             assert response is None
@@ -164,7 +170,8 @@ class TestRetrieveDataFail1(unittest.TestCase):
 
 class TestRetrieveDataFail2(unittest.TestCase):
     '''
-    The previous test works, but this returns None because the WHERE condition in the function is false, because of categorised.
+    The previous test works, but this returns None because the WHERE condition in the function is false, 
+    because of categorised.
     '''
 
     def setUp(self):
@@ -177,12 +184,13 @@ class TestRetrieveDataFail2(unittest.TestCase):
         with sqlite3.connect(db_location, timeout=20) as db:
 
             url = 'url'
+            app_num = 300000
             date_scraped = 'today'
             user_recommendation = 'Recommended'
             user_review_text = 'great'
             user_name = 'Bob'
             classified = 1
-            database_manager.insert_data_reviews_table(db, url, date_scraped, classified, user_recommendation, user_review_text, user_name)
+            database_manager.insert_data_reviews_table(db, url, app_num, date_scraped, classified, user_recommendation, user_review_text, user_name)
 
             response = database_manager.retrieve_data_reviews_table(db, 'Recommended', 0)
             assert response is None
