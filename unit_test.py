@@ -17,7 +17,7 @@ class TestCreateDB(unittest.TestCase):
     def setUp(self):
         db_location = 'database_test.db'
         with sqlite3.connect(db_location, timeout=20) as db:
-            database_manager.create_reviews_table(db)
+            database_manager.create_steam_reviews(db)
 
     def test(self):
         db_location = 'database_test.db'
@@ -30,7 +30,7 @@ class TestCreateDB(unittest.TestCase):
     def tearDown(self):
         db_location = 'database_test.db'
         with sqlite3.connect(db_location, timeout=20) as db:
-            database_manager.drop_reviews_table(db)
+            database_manager.drop_steam_reviews(db)
 
 
 class TestInsertOneData(unittest.TestCase):
@@ -41,7 +41,7 @@ class TestInsertOneData(unittest.TestCase):
     def setUp(self):
         db_location = 'database_test.db'
         with sqlite3.connect(db_location, timeout=20) as db:
-            database_manager.create_reviews_table(db)
+            database_manager.create_steam_reviews(db)
 
     def test(self):
         db_location = 'database_test.db'
@@ -54,7 +54,7 @@ class TestInsertOneData(unittest.TestCase):
             user_review_text = 'great'
             user_name = 'Bob'
             classified = 0
-            database_manager.insert_data_reviews_table(db, url, app_num, date_scraped, classified, user_recommendation, user_review_text, user_name)
+            database_manager.insert_data_steam_reviews(db, url, app_num, date_scraped, classified, user_recommendation, user_review_text, user_name)
 
             cur = db.cursor()
             response = cur.execute("SELECT * FROM steam_reviews;")
@@ -64,7 +64,7 @@ class TestInsertOneData(unittest.TestCase):
     def tearDown(self):
         db_location = 'database_test.db'
         with sqlite3.connect(db_location, timeout=20) as db:
-            database_manager.drop_reviews_table(db)
+            database_manager.drop_steam_reviews(db)
 
 
 class TestInsertTwoData(unittest.TestCase):
@@ -75,7 +75,7 @@ class TestInsertTwoData(unittest.TestCase):
     def setUp(self):
         db_location = 'database_test.db'
         with sqlite3.connect(db_location, timeout=20) as db:
-            database_manager.create_reviews_table(db)
+            database_manager.create_steam_reviews(db)
 
     def test(self):
         db_location = 'database_test.db'
@@ -88,8 +88,8 @@ class TestInsertTwoData(unittest.TestCase):
             user_review_text = 'great'
             user_name = 'Bob'
             classified = 0
-            database_manager.insert_data_reviews_table(db, url, app_num, date_scraped, classified, user_recommendation, user_review_text, user_name)
-            database_manager.insert_data_reviews_table(db, url, app_num, date_scraped, classified, user_recommendation, user_review_text, user_name)
+            database_manager.insert_data_steam_reviews(db, url, app_num, date_scraped, classified, user_recommendation, user_review_text, user_name)
+            database_manager.insert_data_steam_reviews(db, url, app_num, date_scraped, classified, user_recommendation, user_review_text, user_name)
 
             cur = db.cursor()
             response = cur.execute("SELECT * FROM steam_reviews;")
@@ -100,7 +100,7 @@ class TestInsertTwoData(unittest.TestCase):
     def tearDown(self):
         db_location = 'database_test.db'
         with sqlite3.connect(db_location, timeout=20) as db:
-            database_manager.drop_reviews_table(db)
+            database_manager.drop_steam_reviews(db)
 
 
 class TestRetrieveData(unittest.TestCase):
@@ -111,7 +111,7 @@ class TestRetrieveData(unittest.TestCase):
     def setUp(self):
         db_location = 'database_test.db'
         with sqlite3.connect(db_location, timeout=20) as db:
-            database_manager.create_reviews_table(db)
+            database_manager.create_steam_reviews(db)
 
     def test(self):
         db_location = 'database_test.db'
@@ -124,15 +124,15 @@ class TestRetrieveData(unittest.TestCase):
             user_review_text = 'great'
             user_name = 'Bob'
             classified = 0
-            database_manager.insert_data_reviews_table(db, url, app_num, date_scraped, classified, user_recommendation, user_review_text, user_name)
+            database_manager.insert_data_steam_reviews(db, url, app_num, date_scraped, classified, user_recommendation, user_review_text, user_name)
 
-            response = database_manager.retrieve_data_reviews_table(db, 'Recommended', 0)
+            response = database_manager.retrieve_data_steam_reviews(db, 'Recommended', 0)
             assert response == (1, 'url', 300000, 'today', 0, 'Recommended', 'great', 'Bob')
 
     def tearDown(self):
         db_location = 'database_test.db'
         with sqlite3.connect(db_location, timeout=20) as db:
-            database_manager.drop_reviews_table(db)
+            database_manager.drop_steam_reviews(db)
 
 
 class TestRetrieveDataFail1(unittest.TestCase):
@@ -144,7 +144,7 @@ class TestRetrieveDataFail1(unittest.TestCase):
     def setUp(self):
         db_location = 'database_test.db'
         with sqlite3.connect(db_location, timeout=20) as db:
-            database_manager.create_reviews_table(db)
+            database_manager.create_steam_reviews(db)
 
     def test(self):
         db_location = 'database_test.db'
@@ -157,15 +157,15 @@ class TestRetrieveDataFail1(unittest.TestCase):
             user_review_text = 'great'
             user_name = 'Bob'
             classified = 0
-            database_manager.insert_data_reviews_table(db, url, app_num, date_scraped, classified, user_recommendation, user_review_text, user_name)
+            database_manager.insert_data_steam_reviews(db, url, app_num, date_scraped, classified, user_recommendation, user_review_text, user_name)
 
-            response = database_manager.retrieve_data_reviews_table(db, 'Recommended', 0)
+            response = database_manager.retrieve_data_steam_reviews(db, 'Recommended', 0)
             assert response is None
 
     def tearDown(self):
         db_location = 'database_test.db'
         with sqlite3.connect(db_location, timeout=20) as db:
-            database_manager.drop_reviews_table(db)
+            database_manager.drop_steam_reviews(db)
 
 
 class TestRetrieveDataFail2(unittest.TestCase):
@@ -177,7 +177,7 @@ class TestRetrieveDataFail2(unittest.TestCase):
     def setUp(self):
         db_location = 'database_test.db'
         with sqlite3.connect(db_location, timeout=20) as db:
-            database_manager.create_reviews_table(db)
+            database_manager.create_steam_reviews(db)
 
     def test(self):
         db_location = 'database_test.db'
@@ -190,15 +190,15 @@ class TestRetrieveDataFail2(unittest.TestCase):
             user_review_text = 'great'
             user_name = 'Bob'
             classified = 1
-            database_manager.insert_data_reviews_table(db, url, app_num, date_scraped, classified, user_recommendation, user_review_text, user_name)
+            database_manager.insert_data_steam_reviews(db, url, app_num, date_scraped, classified, user_recommendation, user_review_text, user_name)
 
-            response = database_manager.retrieve_data_reviews_table(db, 'Recommended', 0)
+            response = database_manager.retrieve_data_steam_reviews(db, 'Recommended', 0)
             assert response is None
 
     def tearDown(self):
         db_location = 'database_test.db'
         with sqlite3.connect(db_location, timeout=20) as db:
-            database_manager.drop_reviews_table(db)
+            database_manager.drop_steam_reviews(db)
 
 
 class TestRetrieveLastRow(unittest.TestCase):
@@ -209,23 +209,23 @@ class TestRetrieveLastRow(unittest.TestCase):
     def setUp(self):
         db_location = 'database_test.db'
         with sqlite3.connect(db_location, timeout=20) as db:
-            database_manager.create_reviews_table(db)
+            database_manager.create_steam_reviews(db)
 
     def test(self):
         db_location = 'database_test.db'
         with sqlite3.connect(db_location, timeout=20) as db:
 
-            database_manager.insert_data_reviews_table(db, 'url_1', 300000, '2011-01-01', 0, 'Recommended', 'It was great', 'Destroyer')
-            database_manager.insert_data_reviews_table(db, 'url_2', 300020, '2011-01-01', 0, 'Not Recommended', 'It was bad', 'Dismantler')
-            database_manager.insert_data_reviews_table(db, 'url_3', 300025, '2011-01-01', 0, 'Recommended', 'OMG', 'Makiavelli')
+            database_manager.insert_data_steam_reviews(db, 'url_1', 300000, '2011-01-01', 0, 'Recommended', 'It was great', 'Destroyer')
+            database_manager.insert_data_steam_reviews(db, 'url_2', 300020, '2011-01-01', 0, 'Not Recommended', 'It was bad', 'Dismantler')
+            database_manager.insert_data_steam_reviews(db, 'url_3', 300025, '2011-01-01', 0, 'Recommended', 'OMG', 'Makiavelli')
 
-            response = database_manager.retrieve_last_reviews_table(db)
+            response = database_manager.retrieve_last_steam_reviews(db)
             assert response == (3, 'url_3', 300025, '2011-01-01', 0, 'Recommended', 'OMG', 'Makiavelli')
 
     def tearDown(self):
         db_location = 'database_test.db'
         with sqlite3.connect(db_location, timeout=20) as db:
-            database_manager.drop_reviews_table(db)
+            database_manager.drop_steam_reviews(db)
 
 
 
