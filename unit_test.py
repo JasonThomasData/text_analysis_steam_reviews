@@ -200,6 +200,35 @@ class TestRetrieveDataFail2(unittest.TestCase):
         with sqlite3.connect(db_location, timeout=20) as db:
             database_manager.drop_reviews_table(db)
 
+
+class TestRetrieveLastRow(unittest.TestCase):
+    '''
+    Tests we can retrieve the last row in the table. We need this as a record of what has been scraped.
+    '''
+
+    def setUp(self):
+        db_location = 'database_test.db'
+        with sqlite3.connect(db_location, timeout=20) as db:
+            database_manager.create_reviews_table(db)
+
+    def test(self):
+        db_location = 'database_test.db'
+        with sqlite3.connect(db_location, timeout=20) as db:
+
+            database_manager.insert_data_reviews_table(db, 'url_1', 300000, '2011-01-01', 0, 'Recommended', 'It was great', 'Destroyer')
+            database_manager.insert_data_reviews_table(db, 'url_2', 300020, '2011-01-01', 0, 'Not Recommended', 'It was bad', 'Dismantler')
+            database_manager.insert_data_reviews_table(db, 'url_3', 300025, '2011-01-01', 0, 'Recommended', 'OMG', 'Makiavelli')
+
+            response = database_manager.retrieve_last_reviews_table(db)
+            assert response == (3, 'url_3', 300025, '2011-01-01', 0, 'Recommended', 'OMG', 'Makiavelli')
+
+    def tearDown(self):
+        db_location = 'database_test.db'
+        with sqlite3.connect(db_location, timeout=20) as db:
+            database_manager.drop_reviews_table(db)
+
+
+
 """
 These tests check the scraper is taking content down from the web as it should.
 """

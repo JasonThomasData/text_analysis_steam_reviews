@@ -22,3 +22,9 @@ def retrieve_data_reviews_table(db, user_recommendation, classified):
     data = (user_recommendation, classified)
     cur.execute(query, data)
     return cur.fetchone()
+
+def retrieve_last_reviews_table(db):
+    cur = db.cursor()
+    query = "SELECT * FROM steam_reviews ORDER BY id DESC LIMIT 1;"
+    cur.execute(query)
+    return cur.fetchone()
