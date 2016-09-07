@@ -43,6 +43,7 @@ def get_recommendation_from_image_link(image_div_string):
 def get_reviews_on_page(html_from_page):
     """
     For each review, turn that into a dict, and place in an array of dicts
+    This should be accessed once the app has verified the page has reviews on it.
     """
 
     review_data = []

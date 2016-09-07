@@ -147,7 +147,7 @@ class TestScraperGetAllReviews(unittest.TestCase):
     '''
 
     def test(self):
-        request_response = scraper.scrape_app_page('http://store.steampowered.com/app/', 80)
+        request_response = scraper.scrape_app_page('http://store.steampowered.com/app/', 500)
         reviews = scraper.get_reviews_on_page(request_response)
         assert len(reviews) > 0
 
@@ -161,6 +161,7 @@ class TestScraperDetectRecommended(unittest.TestCase):
     def test(self):
         image_link_string = '<img height="40" src="http://store.akamai.steamstatic.com/public/shared/images/userreviews/icon_thumbsUp_v6.png" width="40"></img></div>'
         assert scraper.get_recommendation_from_image_link(image_link_string) == 'Recommended'
+
 
 class TestScraperDetectNotRecommended(unittest.TestCase):
     '''
@@ -190,7 +191,7 @@ class TestScraperReviewFormatting(unittest.TestCase):
     '''
 
     def test(self):
-        request_response = scraper.scrape_app_page('http://store.steampowered.com/app/', 80)
+        request_response = scraper.scrape_app_page('http://store.steampowered.com/app/', 500)
         reviews = scraper.get_reviews_on_page(request_response)
 
         assert len(reviews[0]['user_recommendation']) > 0
