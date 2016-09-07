@@ -15,3 +15,10 @@ def insert_data_reviews_table(db, url, date_scraped, classified, user_recommenda
     query = "INSERT INTO steam_reviews (url, date_scraped, classified, user_recommendation, user_review_text, user_name) VALUES (?,?,?,?,?,?);"
     data = (url, date_scraped, classified, user_recommendation, user_review_text, user_name)
     cur.execute(query, data)
+
+def retrieve_data_reviews_table(db, user_recommendation, classified):
+    cur = db.cursor()
+    query = "SELECT * FROM steam_reviews WHERE user_recommendation=? AND classified=?;"
+    data = (user_recommendation, classified)
+    cur.execute(query, data)
+    return cur.fetchone()

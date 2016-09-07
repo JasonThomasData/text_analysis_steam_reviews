@@ -100,6 +100,97 @@ class TestInsertTwoData(unittest.TestCase):
         with sqlite3.connect(db_location, timeout=20) as db:
             database_manager.drop_reviews_table(db)
 
+class TestRetrieveData(unittest.TestCase):
+    '''
+    Tests we can retrieve data from db.
+    '''
+
+    def setUp(self):
+        db_location = 'database_test.db'
+        with sqlite3.connect(db_location, timeout=20) as db:
+            database_manager.create_reviews_table(db)
+
+    def test(self):
+        db_location = 'database_test.db'
+        with sqlite3.connect(db_location, timeout=20) as db:
+
+            url = 'url'
+            date_scraped = 'today'
+            user_recommendation = 'Recommended'
+            user_review_text = 'great'
+            user_name = 'Bob'
+            classified = 0
+            database_manager.insert_data_reviews_table(db, url, date_scraped, classified, user_recommendation, user_review_text, user_name)
+
+            response = database_manager.retrieve_data_reviews_table(db, 'Recommended', 0)
+            assert response == (1, 'url', 'today', 0, 'Recommended', 'great', 'Bob')
+
+    def tearDown(self):
+        db_location = 'database_test.db'
+        with sqlite3.connect(db_location, timeout=20) as db:
+            database_manager.drop_reviews_table(db)
+
+
+class TestRetrieveDataFail1(unittest.TestCase):
+    '''
+    The previous test works, but this returns None because the WHERE condition in the function is false, because of recommendation.
+    '''
+
+    def setUp(self):
+        db_location = 'database_test.db'
+        with sqlite3.connect(db_location, timeout=20) as db:
+            database_manager.create_reviews_table(db)
+
+    def test(self):
+        db_location = 'database_test.db'
+        with sqlite3.connect(db_location, timeout=20) as db:
+
+            url = 'url'
+            date_scraped = 'today'
+            user_recommendation = 'Not Recommended'
+            user_review_text = 'great'
+            user_name = 'Bob'
+            classified = 0
+            database_manager.insert_data_reviews_table(db, url, date_scraped, classified, user_recommendation, user_review_text, user_name)
+
+            response = database_manager.retrieve_data_reviews_table(db, 'Recommended', 0)
+            assert response is None
+
+    def tearDown(self):
+        db_location = 'database_test.db'
+        with sqlite3.connect(db_location, timeout=20) as db:
+            database_manager.drop_reviews_table(db)
+
+
+class TestRetrieveDataFail2(unittest.TestCase):
+    '''
+    The previous test works, but this returns None because the WHERE condition in the function is false, because of categorised.
+    '''
+
+    def setUp(self):
+        db_location = 'database_test.db'
+        with sqlite3.connect(db_location, timeout=20) as db:
+            database_manager.create_reviews_table(db)
+
+    def test(self):
+        db_location = 'database_test.db'
+        with sqlite3.connect(db_location, timeout=20) as db:
+
+            url = 'url'
+            date_scraped = 'today'
+            user_recommendation = 'Recommended'
+            user_review_text = 'great'
+            user_name = 'Bob'
+            classified = 1
+            database_manager.insert_data_reviews_table(db, url, date_scraped, classified, user_recommendation, user_review_text, user_name)
+
+            response = database_manager.retrieve_data_reviews_table(db, 'Recommended', 0)
+            assert response is None
+
+    def tearDown(self):
+        db_location = 'database_test.db'
+        with sqlite3.connect(db_location, timeout=20) as db:
+            database_manager.drop_reviews_table(db)
 
 """
 These tests check the scraper is taking content down from the web as it should.
