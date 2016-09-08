@@ -3,11 +3,14 @@
 import unittest, sqlite3, os, atexit
 from application import database_manager, scraper
 
+
 @atexit.register
 def goodbye():
-    print('Tests done, removing database_test.db')
-    os.remove('database_test.db')
-
+    try:
+        print('Tests done, removing database_test.db')
+        os.remove('database_test.db')
+    except FileNotFoundError:
+        pass
 
 """
 These first tests are for the database_manager module. We need the DB before scraping any data.
@@ -232,6 +235,45 @@ class TestRetrieveLastRow(unittest.TestCase):
         with sqlite3.connect(db_location, timeout=20) as db:
             database_manager.drop_steam_reviews(db)
 
+
+class TestScraperDeleteDuplicateReviews(unittest.TestCase):
+    '''
+    Tests duplicate reviews in the DB will be deleted.
+    Some pages will have double-ups of the same review, we need to delete those.
+    This test has two duplicates.
+    '''
+
+    def test(self):
+        list_of_reviews = [
+            {
+                'user_recommendation': 'Recommended',
+                'user_review_text': 'It is great',
+                'user_name': 'bahumbug'
+            },
+            {
+                'user_recommendation': 'Recommended',
+                'user_review_text': 'It is great',
+                'user_name': 'bahumbug'
+            },
+            {
+                'user_recommendation': 'Not Recommended',
+                'user_review_text': 'This is the worst thing that has ever happened.',
+                'user_name': 'WhatYouWantSonny'
+            },
+            {
+                'user_recommendation': 'Recommended',
+                'user_review_text': 'DAMN BUY THIS GAME',
+                'user_name': 'pimplePopper61'
+            },
+            {
+                'user_recommendation': 'Not Recommended',
+                'user_review_text': 'This is the worst thing that has ever happened.',
+                'user_name': 'WhatYouWantSonny'
+            }
+        ]
+
+        reviews_no_duplicates = scraper.remove_duplicates(list_of_reviews)
+        assert len(reviews_no_duplicates) == 3
 
 
 """

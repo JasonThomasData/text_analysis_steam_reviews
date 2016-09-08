@@ -40,6 +40,29 @@ def get_recommendation_from_image_link(image_div_string):
     return 'Issue detecting recommendation'
 
 
+def string_parser(soup_to_parse):
+    all_text_in_elem = soup_to_parse.find_all(text=True)
+    string_of_all_text = ' '.join(all_text_in_elem).strip()
+    return string_of_all_text
+
+
+def remove_duplicates(review_data):
+    '''
+    The intention here is to convert each dict to a tuple, so we can use set() to remove duplicates.
+    Dictionaries are not hashable, which is a requirement of the set() function.
+    '''
+
+    seen = set()
+    review_data_no_duplicates = []
+    for data in review_data:
+        tuple_of_dict = tuple(data.items())
+        if tuple_of_dict not in seen:
+            seen.add(tuple_of_dict)
+            review_data_no_duplicates.append(tuple_of_dict)
+
+    return review_data_no_duplicates
+
+
 def get_reviews_on_page(html_from_page):
     '''
     For each review, turn that into a dict, and place in an array of dicts
@@ -60,10 +83,11 @@ def get_reviews_on_page(html_from_page):
 
         data_for_one_review = {
             "user_recommendation": user_recommendation,
-            "user_review_text": str(user_review_text.find(text=True)).strip(),
-            "user_name": str(user_name.find(text=True)).strip()
+            "user_review_text": string_parser(user_review_text),
+            "user_name": string_parser(user_name)
         }
 
         review_data.append(data_for_one_review)
 
+    review_data_unique = remove_duplicates(review_data)
     return review_data
