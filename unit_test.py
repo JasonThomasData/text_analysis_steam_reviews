@@ -1,8 +1,13 @@
 #! usr/bin/env python3
 
-import unittest
-import sqlite3
+import unittest, sqlite3, os, atexit
 from application import database_manager, scraper
+
+@atexit.register
+def goodbye():
+    print('Tests done, removing database_test.db')
+    os.remove('database_test.db')
+
 
 """
 These first tests are for the database_manager module. We need the DB before scraping any data.
@@ -328,3 +333,4 @@ class TestScraperReviewFormatting(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
