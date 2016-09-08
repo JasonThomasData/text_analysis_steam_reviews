@@ -236,6 +236,36 @@ class TestRetrieveLastRow(unittest.TestCase):
             database_manager.drop_steam_reviews(db)
 
 
+class TestDeleteDuplicatesInDB(unittest.TestCase):
+    '''
+    Tests duplicate rows in the DB will be deleted.
+    Some pages will have double-ups of the same review, we need to delete those.
+    '''
+
+    def setUp(self):
+        db_location = 'database_test.db'
+        with sqlite3.connect(db_location, timeout=20) as db:
+            database_manager.create_steam_reviews(db)
+
+    def test(self):
+        db_location = 'database_test.db'
+        with sqlite3.connect(db_location, timeout=20) as db:
+
+            database_manager.insert_data_steam_reviews(db, 'url_1', 300000, '2011-01-01', 0, 'Recommended', 'It was great', 'Destroyer')
+            database_manager.insert_data_steam_reviews(db, 'url_1', 300000, '2011-01-01', 0, 'Recommended', 'It was great', 'Destroyer')
+            database_manager.insert_data_steam_reviews(db, 'url_1', 300000, '2011-01-01', 0, 'Recommended', 'It was great', 'Destroyer')
+            database_manager.remove_duplicates_steam_reviews(db)
+
+            cur = db.cursor()
+            response = cur.execute("SELECT * FROM steam_reviews WHERE app_num = 300000;")
+            assert len(response.fetchall()) == 1
+
+    def tearDown(self):
+        db_location = 'database_test.db'
+        with sqlite3.connect(db_location, timeout=20) as db:
+            database_manager.drop_steam_reviews(db)
+
+
 class TestScraperDeleteDuplicateReviews(unittest.TestCase):
     '''
     Tests duplicate reviews in the DB will be deleted.
@@ -274,7 +304,6 @@ class TestScraperDeleteDuplicateReviews(unittest.TestCase):
 
         reviews_no_duplicates = scraper.remove_duplicates(list_of_reviews)
         assert len(reviews_no_duplicates) == 3
-
 
 """
 These tests check the scraper is taking content down from the web as it should.
