@@ -29,7 +29,7 @@ def remove_duplicates_steam_reviews(db):
     cur.execute(query)
     db.commit()
 
-def retrieve_data_steam_reviews(db, user_recommendation, classified):
+def retrieve_one_steam_review(db, user_recommendation, classified):
     cur = db.cursor()
     query = "SELECT * FROM steam_reviews WHERE user_recommendation=? AND classified=?;"
     data = (user_recommendation, classified)

@@ -134,7 +134,7 @@ class TestRetrieveData(unittest.TestCase):
             classified = 0
             database_manager.insert_data_steam_reviews(db, url, app_num, date_scraped, classified, user_recommendation, user_review_text, user_name)
 
-            response = database_manager.retrieve_data_steam_reviews(db, 'Recommended', 0)
+            response = database_manager.retrieve_one_steam_review(db, 'Recommended', 0)
             assert response == (1, 'url', 300000, 'today', 0, 'Recommended', 'great', 'Bob')
 
     def tearDown(self):
@@ -167,7 +167,7 @@ class TestRetrieveDataFail1(unittest.TestCase):
             classified = 0
             database_manager.insert_data_steam_reviews(db, url, app_num, date_scraped, classified, user_recommendation, user_review_text, user_name)
 
-            response = database_manager.retrieve_data_steam_reviews(db, 'Recommended', 0)
+            response = database_manager.retrieve_one_steam_review(db, 'Recommended', 0)
             assert response is None
 
     def tearDown(self):
@@ -200,7 +200,7 @@ class TestRetrieveDataFail2(unittest.TestCase):
             classified = 1
             database_manager.insert_data_steam_reviews(db, url, app_num, date_scraped, classified, user_recommendation, user_review_text, user_name)
 
-            response = database_manager.retrieve_data_steam_reviews(db, 'Recommended', 0)
+            response = database_manager.retrieve_one_steam_review(db, 'Recommended', 0)
             assert response is None
 
     def tearDown(self):
@@ -258,7 +258,6 @@ class TestDeleteDuplicatesInDB(unittest.TestCase):
 
             cur = db.cursor()
             response = cur.execute("SELECT * FROM steam_reviews WHERE app_num = 300000;")
-            assert len(response.fetchall()) == 1
 
     def tearDown(self):
         db_location = 'database_test.db'
@@ -304,6 +303,12 @@ class TestScraperDeleteDuplicateReviews(unittest.TestCase):
 
         reviews_no_duplicates = scraper.remove_duplicates(list_of_reviews)
         assert len(reviews_no_duplicates) == 3
+
+        try:
+            assert reviews_no_duplicates[0]['user_recommendation'] == 'Recommended'
+            assert reviews_no_duplicates[1]['user_recommendation'] == 'Not Recommended'
+        except TypeError:
+            assert False #this means the responses are not dicts, which means this fails
 
 """
 These tests check the scraper is taking content down from the web as it should.
