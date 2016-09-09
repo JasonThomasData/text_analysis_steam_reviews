@@ -100,7 +100,7 @@ def get_reviews_on_page(html_from_page):
     review_data_unique = remove_duplicates(review_data)
     return review_data_unique
 
-def get_reviews():
+def get_reviews(db_location):
     '''
     The controlling function for the process that scrapes reviews from steam. Accessed from run_app.py
     '''
@@ -108,12 +108,9 @@ def get_reviews():
     scraper_increment = 5 #app_num increases this much every scraper request
     start_scraping_app_num = 300000 #If the database contains no reviews, start with this app_num
 
-    db_location = 'database_steam_reviews.db'
-    db = sqlite3.connect(db_location, timeout=20)
+    database_manager.create_steam_reviews(db_location)
 
-    database_manager.create_steam_reviews(db)
-
-    last_record = database_manager.retrieve_last_steam_reviews(db)
+    last_record = database_manager.retrieve_last_steam_reviews(db_location)
 
     if last_record is None:
         last_app_num = start_scraping_app_num
@@ -149,4 +146,4 @@ def get_reviews():
             user_review_text = review['user_review_text']
             user_name = review['user_name']
 
-            database_manager.insert_data_steam_reviews(db, url, last_app_num, date_scraped, classified, user_recommendation, user_review_text, user_name)
+            database_manager.insert_data_steam_reviews(db_location, url, last_app_num, date_scraped, classified, user_recommendation, user_review_text, user_name)
