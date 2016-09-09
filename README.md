@@ -4,6 +4,8 @@ The online gaming platform Steam is an excellent source of training data for tex
 
 When you leave a review on Steam, you must mark the review as 'Recommended' or 'Not Recommended'. That makes the Steam reviews a useful dataset, since we can use the reviewers' own stated intentions to know the purpose of the review that was typed.
 
+![steam_review](issues/verify_good_bad.jpg)
+
 So I've scraped thousands of reviews from many hundreds of games of varying genres. I think some of these are also software packages, but Steam is primarily a game store and platform.
 
 To classify the reviews, I've used several machine learning algorithms that are useful for text analysis. Those are: Multinomal Naive Bayes, Linear SVC, SVC and Logistic Regression. There's an excellent reading material on each of these algorithms below.
