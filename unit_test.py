@@ -471,6 +471,26 @@ class TestDataPrepFormListsForTraining(unittest.TestCase):
         assert len(training_data) == 500
         assert len(test_data) == 100
 
+
+class TestDataPrepTransposeLists(unittest.TestCase):
+    '''
+    Tests our data is transposed as expected.
+    '''
+
+    def test(self):
+        training_data = [('row id', 'url_10', 300040, '2011-01-01', 0, 'Recommended', 'It was great', 'Sluggish666')] * 100
+        testing_data = [('row id', 'url', 300000, '2011-01-01', 0, 'Not Recommended', 'It was bad', 'Destroyer')] * 100
+
+        training_data_transposed, testing_data_transposed = data_prep.transpose_data(training_data, testing_data)
+
+        assert training_data_transposed[5][20] == 'Recommended'
+        assert training_data_transposed[6][40] == 'It was great'
+        assert training_data_transposed[5][50] == 'Recommended'
+        assert testing_data_transposed[5][60] == 'Not Recommended'
+        assert testing_data_transposed[6][70] == 'It was bad'
+        assert testing_data_transposed[5][80] == 'Not Recommended'
+
+
 """
 These tests check the scraper is taking content down from the web as it should.
 """

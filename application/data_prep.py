@@ -1,5 +1,11 @@
 #! usr/bin/env python3
 
+'''
+This module contains more functions that I would usually have, because I wanted to
+make sure the process of preparing the data for classification was explained as
+well as possible. Having more functions also allows to have more specific tests.
+'''
+
 from application import database_manager
 import sqlite3
 import numpy as np
@@ -38,3 +44,14 @@ def form_training_test_lists(recommended_reviews, not_recommended_reviews, inter
     testing_data = recommended_reviews[:interval_split] + not_recommended_reviews[:interval_split]
 
     return training_data, testing_data
+
+
+def transpose_data(training_data, testing_data):
+    '''
+    This will turn each list from a list of n-size tuples, to an n-size list of lists.
+    '''
+    
+    training_data_transposed = np.transpose(training_data)
+    testing_data_transposed = np.transpose(testing_data)
+
+    return training_data_transposed, testing_data_transposed
