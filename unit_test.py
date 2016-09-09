@@ -453,6 +453,24 @@ class TestDataPrepRetrieveEqual(unittest.TestCase):
         with sqlite3.connect(db_location, timeout=20) as db:
             database_manager.drop_steam_reviews(db)
 
+
+class TestDataPrepFormListsForTraining(unittest.TestCase):
+    '''
+    Tests the function that splits the lists of Recommended and Not Recommended reviews and combines
+    them into a list of training_data (large) and test_data (size equal to interval).
+    Both are equally formed of 'Recommended' and 'Not Recommended'
+    '''
+
+    def test(self):
+        recommended_reviews = ['Recommeded review'] * 300
+        not_recommended_reviews = ['Not recommeded review'] * 300
+        interval = 100
+
+        training_data, test_data = data_prep.form_training_test_lists(recommended_reviews, not_recommended_reviews, interval)
+
+        assert len(training_data) == 500
+        assert len(test_data) == 100
+
 """
 These tests check the scraper is taking content down from the web as it should.
 """
