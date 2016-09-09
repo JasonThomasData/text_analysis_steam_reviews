@@ -55,3 +55,28 @@ def transpose_data(training_data, testing_data):
     testing_data_transposed = np.transpose(testing_data)
 
     return training_data_transposed, testing_data_transposed
+
+
+def extract_classes(training_data_transposed, testing_data_transposed):
+    '''
+    Now the data is transposed, we need to get rid of the lists that don't contain classes.
+    The classes are needed to train the classifiers and check the classified data are accurate, 
+    since the Steam users themselves stated their intentions in the review.
+    '''
+    
+    training_data_classes = training_data_transposed[5]
+    testing_data_classes = testing_data_transposed[5]
+
+    return training_data_classes, testing_data_classes
+
+
+def extract_reviews(training_data_transposed, testing_data_transposed):
+    '''
+    Now the data is transposed, we need to get rid of the lists that don't contain review documents.
+    The documents are needed to train the classifiers and test those classifiers.
+    '''
+    
+    training_data_documents = training_data_transposed[6]
+    testing_data_documents = testing_data_transposed[6]
+
+    return training_data_documents, testing_data_documents

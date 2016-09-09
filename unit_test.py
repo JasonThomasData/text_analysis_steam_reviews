@@ -490,6 +490,39 @@ class TestDataPrepTransposeLists(unittest.TestCase):
         assert testing_data_transposed[6][70] == 'It was bad'
         assert testing_data_transposed[5][80] == 'Not Recommended'
 
+class TestDataPrepExtractClasses(unittest.TestCase):
+    '''
+    Tests our training_data_classes and testing_data_classes are returned as expected.
+    '''
+
+    def test(self):
+        training_data = [('row id', 'url_10', 300040, '2011-01-01', 0, 'Recommended', 'It was great', 'Sluggish666')] * 100
+        testing_data = [('row id', 'url', 300000, '2011-01-01', 0, 'Not Recommended', 'It was bad', 'Destroyer')] * 100
+
+        training_data_transposed, testing_data_transposed = data_prep.transpose_data(training_data, testing_data)
+
+        training_data_classes, testing_data_classes = data_prep.extract_classes(training_data_transposed, testing_data_transposed)
+
+        assert len(training_data_classes) == 100
+        assert len(testing_data_classes) == 100
+
+
+class TestDataPrepExtractClasses(unittest.TestCase):
+    '''
+    Tests our training_data_documents and testing_data_documents are returned as expected.
+    '''
+
+    def test(self):
+        training_data = [('row id', 'url_10', 300040, '2011-01-01', 0, 'Recommended', 'It was great', 'Sluggish666')] * 100
+        testing_data = [('row id', 'url', 300000, '2011-01-01', 0, 'Not Recommended', 'It was bad', 'Destroyer')] * 100
+
+        training_data_transposed, testing_data_transposed = data_prep.transpose_data(training_data, testing_data)
+
+        training_data_documents, testing_data_documents = data_prep.extract_reviews(training_data_transposed, testing_data_transposed)
+
+        assert len(training_data_documents) == 100
+        assert len(testing_data_documents) == 100
+
 
 """
 These tests check the scraper is taking content down from the web as it should.
