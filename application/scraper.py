@@ -53,14 +53,21 @@ def remove_duplicates(review_data):
     '''
 
     seen = set()
-    review_data_no_duplicates = []
-    for data in review_data:
+    indeces_of_duplicates = []
+
+    #find the indices of duplicate dicts
+    for i, data in enumerate(review_data):
         tuple_of_dict = tuple(data.items())
         if tuple_of_dict not in seen:
             seen.add(tuple_of_dict)
-            review_data_no_duplicates.append(tuple_of_dict)
+        else:
+            indeces_of_duplicates.append(i)
 
-    return review_data_no_duplicates
+    #go through original list of dicts backwards and remove those.
+    for i in sorted(indeces_of_duplicates, reverse=True):
+            del review_data[i]
+
+    return review_data
 
 
 def get_reviews_on_page(html_from_page):
@@ -90,4 +97,4 @@ def get_reviews_on_page(html_from_page):
         review_data.append(data_for_one_review)
 
     review_data_unique = remove_duplicates(review_data)
-    return review_data
+    return review_data_unique
