@@ -12,7 +12,7 @@ This is for a very successful game, Halflife 2. Clearly not a negative review.
 
 This person seems to lack skill.
 
-![bad at games](bat_at_gaming.png)
+![bad at games](bad_at_gaming.png)
 
 What even is this? This means nothing.
 
