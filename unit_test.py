@@ -111,7 +111,7 @@ class TestInsertTwoData(unittest.TestCase):
             database_manager.drop_steam_reviews(db)
 
 
-class TestRetrieveData(unittest.TestCase):
+class TestRetrieveDataOne(unittest.TestCase):
     '''
     Tests we can retrieve data from db.
     '''
@@ -134,8 +134,8 @@ class TestRetrieveData(unittest.TestCase):
             classified = 0
             database_manager.insert_data_steam_reviews(db, url, app_num, date_scraped, classified, user_recommendation, user_review_text, user_name)
 
-            response = database_manager.retrieve_one_steam_review(db, 'Recommended', 0)
-            assert response == (1, 'url', 300000, 'today', 0, 'Recommended', 'great', 'Bob')
+            response = database_manager.retrieve_steam_reviews(db, 'Recommended', 0, 1)
+            assert response[0] == (1, 'url', 300000, 'today', 0, 'Recommended', 'great', 'Bob')
 
     def tearDown(self):
         db_location = 'database_test.db'
@@ -143,9 +143,9 @@ class TestRetrieveData(unittest.TestCase):
             database_manager.drop_steam_reviews(db)
 
 
-class TestRetrieveDataFail1(unittest.TestCase):
+class TestRetrieveDataOneFail1(unittest.TestCase):
     '''
-    The previous test works, but this returns None because the WHERE condition in the function is false, 
+    The previous test works, but this returns len(response) == 0 because the WHERE condition in the function is false, 
     because of recommendation.
     '''
 
@@ -167,8 +167,8 @@ class TestRetrieveDataFail1(unittest.TestCase):
             classified = 0
             database_manager.insert_data_steam_reviews(db, url, app_num, date_scraped, classified, user_recommendation, user_review_text, user_name)
 
-            response = database_manager.retrieve_one_steam_review(db, 'Recommended', 0)
-            assert response is None
+            response = database_manager.retrieve_steam_reviews(db, 'Recommended', 0, 1)
+            assert len(response) == 0
 
     def tearDown(self):
         db_location = 'database_test.db'
@@ -176,9 +176,9 @@ class TestRetrieveDataFail1(unittest.TestCase):
             database_manager.drop_steam_reviews(db)
 
 
-class TestRetrieveDataFail2(unittest.TestCase):
+class TestRetrieveDataOneFail2(unittest.TestCase):
     '''
-    The previous test works, but this returns None because the WHERE condition in the function is false, 
+    The first of these tests works, but this returns len(response) == 0 because the WHERE condition in the function is false, 
     because of categorised.
     '''
 
@@ -200,8 +200,110 @@ class TestRetrieveDataFail2(unittest.TestCase):
             classified = 1
             database_manager.insert_data_steam_reviews(db, url, app_num, date_scraped, classified, user_recommendation, user_review_text, user_name)
 
-            response = database_manager.retrieve_one_steam_review(db, 'Recommended', 0)
-            assert response is None
+            response = database_manager.retrieve_steam_reviews(db, 'Recommended', 0, 1)
+            assert len(response) == 0
+
+    def tearDown(self):
+        db_location = 'database_test.db'
+        with sqlite3.connect(db_location, timeout=20) as db:
+            database_manager.drop_steam_reviews(db)
+
+
+class TestRetrieveDataBatch1(unittest.TestCase):
+    '''
+    Test batch retrieval of data from db.    
+    '''
+
+    def setUp(self):
+        db_location = 'database_test.db'
+        with sqlite3.connect(db_location, timeout=20) as db:
+            database_manager.create_steam_reviews(db)
+
+    def test(self):
+        db_location = 'database_test.db'
+        with sqlite3.connect(db_location, timeout=20) as db:
+
+            database_manager.insert_data_steam_reviews(db, 'url_1', 300000, '2011-01-01', 0, 'Not Recommended', 'It was great', 'Destroyer')
+            database_manager.insert_data_steam_reviews(db, 'url_2', 300020, '2011-01-01', 0, 'Not Recommended', 'It was bad', 'Dismantler')
+            database_manager.insert_data_steam_reviews(db, 'url_3', 300025, '2011-01-01', 0, 'Not Recommended', 'OMG', 'Makiavelli')
+            database_manager.insert_data_steam_reviews(db, 'url_4', 300040, '2011-01-01', 0, 'Not Recommended', 'I want to cry myself to sleep', 'GiveMeSugar')
+            database_manager.insert_data_steam_reviews(db, 'url_5', 300040, '2011-01-01', 0, 'Not Recommended', 'When I get out of this padded cell I will bake a cake', 'Sluggish666')
+            database_manager.insert_data_steam_reviews(db, 'url_6', 300000, '2011-01-01', 0, 'Recommended', 'It was great', 'Destroyer')
+            database_manager.insert_data_steam_reviews(db, 'url_7', 300020, '2011-01-01', 0, 'Recommended', 'It was bad', 'Dismantler')
+            database_manager.insert_data_steam_reviews(db, 'url_8', 300025, '2011-01-01', 0, 'Recommended', 'OMG', 'Makiavelli')
+            database_manager.insert_data_steam_reviews(db, 'url_9', 300040, '2011-01-01', 0, 'Recommended', 'I want to cry myself to sleep', 'GiveMeSugar')
+            database_manager.insert_data_steam_reviews(db, 'url_10', 300040, '2011-01-01', 0, 'Recommended', 'When I get out of this padded cell I will bake a cake', 'Sluggish666')
+
+            response = database_manager.retrieve_steam_reviews(db, 'Not Recommended', 0, 3)
+            assert len(response) == 3
+
+    def tearDown(self):
+        db_location = 'database_test.db'
+        with sqlite3.connect(db_location, timeout=20) as db:
+            database_manager.drop_steam_reviews(db)
+
+
+class TestRetrieveDataBatch2(unittest.TestCase):
+    '''
+    Test batch retrieval of data from db.    
+    '''
+
+    def setUp(self):
+        db_location = 'database_test.db'
+        with sqlite3.connect(db_location, timeout=20) as db:
+            database_manager.create_steam_reviews(db)
+
+    def test(self):
+        db_location = 'database_test.db'
+        with sqlite3.connect(db_location, timeout=20) as db:
+
+            database_manager.insert_data_steam_reviews(db, 'url_1', 300000, '2011-01-01', 0, 'Not Recommended', 'It was great', 'Destroyer')
+            database_manager.insert_data_steam_reviews(db, 'url_2', 300020, '2011-01-01', 0, 'Not Recommended', 'It was bad', 'Dismantler')
+            database_manager.insert_data_steam_reviews(db, 'url_3', 300025, '2011-01-01', 0, 'Not Recommended', 'OMG', 'Makiavelli')
+            database_manager.insert_data_steam_reviews(db, 'url_4', 300040, '2011-01-01', 0, 'Not Recommended', 'I want to cry myself to sleep', 'GiveMeSugar')
+            database_manager.insert_data_steam_reviews(db, 'url_5', 300040, '2011-01-01', 0, 'Not Recommended', 'When I get out of this padded cell I will bake a cake', 'Sluggish666')
+            database_manager.insert_data_steam_reviews(db, 'url_6', 300000, '2011-01-01', 0, 'Recommended', 'It was great', 'Destroyer')
+            database_manager.insert_data_steam_reviews(db, 'url_7', 300020, '2011-01-01', 0, 'Recommended', 'It was bad', 'Dismantler')
+            database_manager.insert_data_steam_reviews(db, 'url_8', 300025, '2011-01-01', 0, 'Recommended', 'OMG', 'Makiavelli')
+            database_manager.insert_data_steam_reviews(db, 'url_9', 300040, '2011-01-01', 0, 'Recommended', 'I want to cry myself to sleep', 'GiveMeSugar')
+            database_manager.insert_data_steam_reviews(db, 'url_10', 300040, '2011-01-01', 0, 'Recommended', 'When I get out of this padded cell I will bake a cake', 'Sluggish666')
+
+            response = database_manager.retrieve_steam_reviews(db, 'Recommended', 0, 7)
+            assert len(response) == 5
+
+    def tearDown(self):
+        db_location = 'database_test.db'
+        with sqlite3.connect(db_location, timeout=20) as db:
+            database_manager.drop_steam_reviews(db)
+
+
+class TestRetrieveDataBatch3(unittest.TestCase):
+    '''
+    Test batch retrieval of data from db.    
+    '''
+
+    def setUp(self):
+        db_location = 'database_test.db'
+        with sqlite3.connect(db_location, timeout=20) as db:
+            database_manager.create_steam_reviews(db)
+
+    def test(self):
+        db_location = 'database_test.db'
+        with sqlite3.connect(db_location, timeout=20) as db:
+
+            database_manager.insert_data_steam_reviews(db, 'url_1', 300000, '2011-01-01', 0, 'Not Recommended', 'It was great', 'Destroyer')
+            database_manager.insert_data_steam_reviews(db, 'url_2', 300020, '2011-01-01', 0, 'Not Recommended', 'It was bad', 'Dismantler')
+            database_manager.insert_data_steam_reviews(db, 'url_3', 300025, '2011-01-01', 0, 'Not Recommended', 'OMG', 'Makiavelli')
+            database_manager.insert_data_steam_reviews(db, 'url_4', 300040, '2011-01-01', 0, 'Not Recommended', 'I want to cry myself to sleep', 'GiveMeSugar')
+            database_manager.insert_data_steam_reviews(db, 'url_5', 300040, '2011-01-01', 0, 'Not Recommended', 'When I get out of this padded cell I will bake a cake', 'Sluggish666')
+            database_manager.insert_data_steam_reviews(db, 'url_6', 300000, '2011-01-01', 0, 'Recommended', 'It was great', 'Destroyer')
+            database_manager.insert_data_steam_reviews(db, 'url_7', 300020, '2011-01-01', 0, 'Recommended', 'It was bad', 'Dismantler')
+            database_manager.insert_data_steam_reviews(db, 'url_8', 300025, '2011-01-01', 0, 'Recommended', 'OMG', 'Makiavelli')
+            database_manager.insert_data_steam_reviews(db, 'url_9', 300040, '2011-01-01', 0, 'Recommended', 'I want to cry myself to sleep', 'GiveMeSugar')
+            database_manager.insert_data_steam_reviews(db, 'url_10', 300040, '2011-01-01', 0, 'Recommended', 'When I get out of this padded cell I will bake a cake', 'Sluggish666')
+
+            response = database_manager.retrieve_steam_reviews(db, 'Recommended', 0, 2)
+            assert len(response) == 2
 
     def tearDown(self):
         db_location = 'database_test.db'

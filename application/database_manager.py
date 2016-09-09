@@ -29,12 +29,12 @@ def remove_duplicates_steam_reviews(db):
     cur.execute(query)
     db.commit()
 
-def retrieve_one_steam_review(db, user_recommendation, classified):
+def retrieve_steam_reviews(db, user_recommendation, classified, review_quantity):
     cur = db.cursor()
-    query = "SELECT * FROM steam_reviews WHERE user_recommendation=? AND classified=?;"
-    data = (user_recommendation, classified)
+    query = "SELECT * FROM steam_reviews WHERE user_recommendation=? AND classified=? ORDER BY id DESC LIMIT ?;"
+    data = (user_recommendation, classified, review_quantity)
     cur.execute(query, data)
-    return cur.fetchone()
+    return cur.fetchall()
 
 def retrieve_last_steam_reviews(db):
     cur = db.cursor()
