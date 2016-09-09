@@ -78,3 +78,22 @@ def extract_reviews(training_data_transposed, testing_data_transposed):
 
     return training_data_documents, testing_data_documents
 
+
+def prep_for_classifiers(db_location):
+    '''
+    The intention is to retrive lists that are increasingly large.
+    The data retrieved must be balanced, so this means retrieving an equal number of Recommended and Not Recommended reviews.
+    The interval is the number of data to classify each iteration, to test the classifier.
+    This controller function is called by the train_classify_data module.
+    '''
+
+    recommended_reviews, not_recommended_reviews = retrieve_reviews_balanced(db_location, reviews_to_train)
+
+    training_data, testing_data = form_training_test_lists(recommended_reviews, not_recommended_reviews, interval)
+
+    training_data_transposed, testing_data_transposed = transpose_data(training_data, testing_data)
+
+    training_data_documents, testing_data_documents = extract_reviews(training_data_transposed, testing_data_transposed)
+    training_data_classes, testing_data_classes = extract_classes(training_data_transposed, testing_data_transposed)
+
+    return training_data_documents, testing_data_documents, training_data_classes, testing_data_classes
