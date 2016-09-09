@@ -104,6 +104,7 @@ def get_reviews(db_location):
     '''
     The controlling function for the process that scrapes reviews from steam. Accessed from run_app.py
     '''
+
     sleep_time_between_requests = 1 #So Steam can't complain this is a burden on their scrapers.
     scraper_increment = 5 #app_num increases this much every scraper request
     start_scraping_app_num = 300000 #If the database contains no reviews, start with this app_num

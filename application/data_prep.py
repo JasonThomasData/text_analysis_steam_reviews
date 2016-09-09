@@ -3,7 +3,11 @@
 '''
 This module contains more functions that I would usually have, because I wanted to
 make sure the process of preparing the data for classification was explained as
-well as possible. Having more functions also allows to have more specific tests.
+well as possible. 
+Having more functions also allows to have more specific tests
+and more docstrings.
+Note the functions beginning with extract_ are tightly-coupled to the dataset structure,
+which is because sqlite3 returns rows as tuples.
 '''
 
 from application import database_manager

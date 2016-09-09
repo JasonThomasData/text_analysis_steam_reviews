@@ -26,6 +26,7 @@ def remove_duplicates_steam_reviews(db_location):
     This can be done to make sure there are no duplicates if concerned the scraper hasn't worked.
     This may be useful to test that scraper functionality has worked.
     '''
+
     with sqlite3.connect(db_location, timeout=20) as db:
         cur = db.cursor()
         query = "DELETE FROM steam_reviews WHERE id NOT IN (SELECT MAX(id) FROM steam_reviews GROUP BY user_name, user_recommendation, user_review_text);"
