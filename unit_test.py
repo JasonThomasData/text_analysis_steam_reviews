@@ -1,7 +1,7 @@
 #! usr/bin/env python3
 
 import unittest, sqlite3, os, atexit
-from application import database_manager, scraper
+from application import database_manager, scraper, data_prep
 
 
 @atexit.register
@@ -411,6 +411,47 @@ class TestScraperDeleteDuplicateReviews(unittest.TestCase):
             assert reviews_no_duplicates[1]['user_recommendation'] == 'Not Recommended'
         except TypeError:
             assert False #this means the responses are not dicts, which means this fails
+
+"""
+These tests are for the data_prep module.
+"""
+
+class TestDataPrepRetrieveEqual(unittest.TestCase):
+    '''
+    Tests the function that retrieves an equal number of 'Recommended' and 'Not Recommended' reviews.
+    '''
+
+    def setUp(self):
+        db_location = 'database_test.db'
+        with sqlite3.connect(db_location, timeout=20) as db:
+            database_manager.create_steam_reviews(db)
+            database_manager.insert_data_steam_reviews(db, 'url_1', 300000, '2011-01-01', 0, 'Not Recommended', 'It was great', 'Destroyer')
+            database_manager.insert_data_steam_reviews(db, 'url_2', 300020, '2011-01-01', 0, 'Not Recommended', 'It was bad', 'Dismantler')
+            database_manager.insert_data_steam_reviews(db, 'url_3', 300025, '2011-01-01', 0, 'Not Recommended', 'OMG', 'Makiavelli')
+            database_manager.insert_data_steam_reviews(db, 'url_4', 300040, '2011-01-01', 0, 'Not Recommended', 'I want to cry myself to sleep', 'GiveMeSugar')
+            database_manager.insert_data_steam_reviews(db, 'url_5', 300040, '2011-01-01', 0, 'Not Recommended', 'When I get out of this padded cell I will bake a cake', 'Sluggish666')
+            database_manager.insert_data_steam_reviews(db, 'url_6', 300000, '2011-01-01', 0, 'Recommended', 'It was great', 'Destroyer')
+            database_manager.insert_data_steam_reviews(db, 'url_7', 300020, '2011-01-01', 0, 'Recommended', 'It was bad', 'Dismantler')
+            database_manager.insert_data_steam_reviews(db, 'url_8', 300025, '2011-01-01', 0, 'Recommended', 'OMG', 'Makiavelli')
+            database_manager.insert_data_steam_reviews(db, 'url_9', 300040, '2011-01-01', 0, 'Recommended', 'I want to cry myself to sleep', 'GiveMeSugar')
+            database_manager.insert_data_steam_reviews(db, 'url_10', 300040, '2011-01-01', 0, 'Recommended', 'When I get out of this padded cell I will bake a cake', 'Sluggish666')
+
+
+    def test(self):
+        db_location = 'database_test.db'
+        with sqlite3.connect(db_location, timeout=20) as db:
+            recommended_reviews, not_recommended_reviews = data_prep.retrieve_reviews_balanced(db, 4)
+            assert len(recommended_reviews) == 2
+            assert len(not_recommended_reviews) == 2
+            assert not_recommended_reviews[0][5] == 'Not Recommended'
+            assert not_recommended_reviews[1][5] == 'Not Recommended'
+            assert recommended_reviews[0][5] == 'Recommended'
+            assert recommended_reviews[1][5] == 'Recommended'
+
+    def tearDown(self):
+        db_location = 'database_test.db'
+        with sqlite3.connect(db_location, timeout=20) as db:
+            database_manager.drop_steam_reviews(db)
 
 """
 These tests check the scraper is taking content down from the web as it should.
