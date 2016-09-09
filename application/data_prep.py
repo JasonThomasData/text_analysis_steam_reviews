@@ -10,11 +10,8 @@ from application import database_manager
 import sqlite3
 import numpy as np
 
-start_interval = 200
-end_interval = 5100
-interval = 100
 
-def retrieve_reviews_balanced(db, reviews_to_train):
+def retrieve_reviews_balanced(db_location, reviews_to_train):
     '''
     Retrieves an equal number of 'Recommended' and 'Not Recommended' reviews rows. 
     These are the entire rows from the db.
@@ -25,8 +22,8 @@ def retrieve_reviews_balanced(db, reviews_to_train):
 
     review_quantity = int(reviews_to_train / 2)
     
-    recommended_reviews = database_manager.retrieve_steam_reviews(db, 'Recommended', 0, review_quantity)
-    not_recommended_reviews = database_manager.retrieve_steam_reviews(db, 'Not Recommended', 0, review_quantity)
+    recommended_reviews = database_manager.retrieve_steam_reviews(db_location, 'Recommended', 0, review_quantity)
+    not_recommended_reviews = database_manager.retrieve_steam_reviews(db_location, 'Not Recommended', 0, review_quantity)
 
     return recommended_reviews, not_recommended_reviews
 
@@ -80,3 +77,4 @@ def extract_reviews(training_data_transposed, testing_data_transposed):
     testing_data_documents = testing_data_transposed[6]
 
     return training_data_documents, testing_data_documents
+
