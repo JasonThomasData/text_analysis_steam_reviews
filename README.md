@@ -10,6 +10,8 @@ So I've scraped thousands of reviews from many hundreds of games of varying genr
 
 To classify the reviews, I've used several machine learning algorithms that are useful for text analysis. Those are: Multinomal Naive Bayes, Linear SVC, SVC and Logistic Regression. There's an excellent reading material on each of these algorithms below.
 
+This project is a look at the cumulative success rate of each
+
 ###Data accuracy and concerns
 
 Some of the reviews I've found on Steam are interesting - check [this catalogue](/issues) of interesting reviews I've found.
@@ -22,25 +24,31 @@ Underlying this project is the naive assumption that most reviews will be roughl
 
 ###Some results and a pretty chart
 
-Most Scikit-Learn classifiers (except the Multinomial Naive Bayes classifier) do not allow to partial_fit(). Using that function allows training the classifier with new data on the go. Therefore, the classifiers are trained with increasingly-large batches of data from the database of steam reviews.
+Of the classifiers mentioned above, only the Multinomial Naive Bayes classifier allows the partial_fit() method, which allows you to train a classifier with increments. That would be useful to add training data to an existing classifier, like a spam filter in an email account. 
 
-To do this, a module called data_prep retrieves data in increments of 100. Each time those reviews were 50% 'Recommended' and 50% 'Not Recommended'.
+To do an analysis of cumulative sucess rates is simple enough - this involves loading larger portions of data, each starting at zero, for training and testing. The classifiers are trained with increasingly-large batches of data from the database of steam reviews.
 
-#####The process
+To do this, a module called data_prep retrieves data in increments. If the increments are 100, each epoch of training would have data that is 50% 'Recommended' and 50% 'Not Recommended'.
 
-So the first round of training and classifying is with 200 reviews. The classifier is trained with the first 100 (50 'Recommended' and 50 'Not Recommended'). Then we get the classifiers to predict the other 100 reviews, also evenly-split. Next time the program will retrieve 300 reviews, train the classifiers with the first 200, and use the other 100 to get the classifiers predict the intention of each review. The results of each 100 review block is saved to a database. 
+####The process
 
-For example, if each classifier accurately predicts 80% of 'Recommended' reviews and 60% of 'Not Recommended' reviews from that block, the results for that block are saved as the average, 70%.
+So by default, the first round of training and classifying is with 200 reviews. We retrieve 100 'Recommended' and another 100 'Not Recommended' records, to keep everything nice and simple.
+
+The classifier is trained with 100 reviews (50 'Recommended' and 50 'Not Recommended'). Then we get the classifiers to predict the other 100 reviews that are also evenly-split. Next time the program will retrieve 300 reviews, train the classifiers with the first 200, and use the other 100 to get the classifiers predict the intention of each review. 
+
+The results of each 100 review block is saved to a database. For example, if each classifier accurately predicts 80% of 'Recommended' reviews and 60% of 'Not Recommended' reviews from that block, the results for that block are saved as the average, 70%.
 
 This scoring process will be for every classifier.
 
-An idea to extend this project is to use the partial_fit() method with the Multinomial Naive Bayes classifier. You could pass in reviews to the classifier in increments. The classifier could be saved as a binary file using Pickle, so none of the work is lost. That could be used to make a classifier that responds to a dataset that changes over time.
+This training in increments will allow us to evaluate how each classifier performs as the training data gets larger.
 
-###Software used in this project
+An idea to extend this project is to use the partial_fit() method with the Multinomial Naive Bayes classifier and save the classifier with Pickle so it persists. However, since other Scikit-learn classifiers don't allow partial_fit(), there would be no comparison. 
+
+###Dependencies used in this project
 
 This project was developed with Python3 on Ubuntu 16.04. 
 
-This uses Scikit-Learn, nuMpy, Python-Requests and BeautifulSoup4.
+This uses Scikit-Learn, numPy, Python-Requests and BeautifulSoup4.
 
 This also uses sqlite3, but I think that comes standard with Python3.
 
@@ -80,7 +88,9 @@ This project has a single interface for the user to use. To use the program:
     #Get statistics from classification data
     python3 run_app.py make_report
 
-If you're running this project from a terminal, be sure to use ctrl+c to close this program. I've found ctrl+z will close your database if any process is using it, which means the lock that process put on the db will remain and you'll have to unlock it. I haven't found a reliable way to unlock these databases.
+If you open that with a version of Python < version 3, it will boot you out.
+
+If you're running this project from a terminal, be sure to use ctrl+c to close this program. I've found ctrl+z will close your database if any process is using it, which means the lock that process put on the db will remain and you'll have to unlock it. I haven't found a reliable way to unlock these databases, but I assume there is a way.
 
 ###Unit tests
 
@@ -92,7 +102,7 @@ To run the tests, got to the terminal and type:
 
     python3 unit_test.py
 
-I've put all tests in one file, but you can shift them around if you like because they all setUp() and tearDown() their own requirements.
+I've put all tests in one file. You can shift them around if you like because they all setUp() and tearDown() their own requirements.
 
 An internet connection is required for the tests to pass, since some tests scrape steam.
 
