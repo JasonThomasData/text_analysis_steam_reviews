@@ -98,7 +98,7 @@ def prep_for_classifiers(db_location, reviews_to_retrieve, reviews_to_test):
 
     training_data_transposed, testing_data_transposed = transpose_data(training_data, testing_data)
 
-    training_data_documents, testing_data_documents = extract_reviews(training_data_transposed, testing_data_transposed)
-    training_data_classes, testing_data_classes = extract_classes(training_data_transposed, testing_data_transposed)
+    training_documents, testing_documents = extract_reviews(training_data_transposed, testing_data_transposed)
+    training_classes, testing_classes = extract_classes(training_data_transposed, testing_data_transposed)
 
-    return training_data_documents, testing_data_documents, training_data_classes, testing_data_classes
+    return training_documents, testing_documents, training_classes, testing_classes
