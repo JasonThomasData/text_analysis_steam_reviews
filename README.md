@@ -24,25 +24,15 @@ Underlying this project is the naive assumption that most reviews will be roughl
 
 ###Some results and a pretty chart
 
-Of the classifiers mentioned above, only the Multinomial Naive Bayes classifier allows the partial_fit() method, which allows you to train a classifier with increments. That would be useful to add training data to an existing classifier, like a spam filter in an email account. 
+Of the classifiers mentioned above, only the Multinomial Naive Bayes classifier allows the partial_fit() method, which allows you to train a classifier with increments. 
 
-To do an analysis of cumulative sucess rates is simple enough - this involves loading larger portions of data, each starting at zero, for training and testing. The classifiers are trained with increasingly-large batches of data from the database of steam reviews.
+I've tried to train classifiers in batches, but when the training data gets toward the thousands, it gets very slow. 
 
-To do this, a module called data_prep retrieves data in increments. If the increments are 100, each epoch of training would have data that is 50% 'Recommended' and 50% 'Not Recommended'.
+Previously, two modules - data_prep and train_classify_data - trained and tested four classifiers in batches. That has returned some poor results. The classifiers are slow to get a result, and they get to around 75% per cent and stop getting better.
 
-####The process
+![results_from_comparisons](pics/results_from_comparisons.png)
 
-So by default, the first round of training and classifying is with 200 reviews. We retrieve 100 'Recommended' and another 100 'Not Recommended' records, to keep everything nice and simple.
-
-The classifier is trained with 100 reviews (50 'Recommended' and 50 'Not Recommended'). Then we get the classifiers to predict the other 100 reviews that are also evenly-split. Next time the program will retrieve 300 reviews, train the classifiers with the first 200, and use the other 100 to get the classifiers predict the intention of each review. 
-
-The results of each 100 review block is saved to a database. For example, if each classifier accurately predicts 80% of 'Recommended' reviews and 60% of 'Not Recommended' reviews from that block, the results for that block are saved as the average, 70%.
-
-This scoring process will be for every classifier.
-
-This training in increments will allow us to evaluate how each classifier performs as the training data gets larger.
-
-An idea to extend this project is to use the partial_fit() method with the Multinomial Naive Bayes classifier and save the classifier with Pickle so it persists. However, since other Scikit-learn classifiers don't allow partial_fit(), there would be no comparison. 
+So I think this is not a great result. I think the way to get a better result is to train the MNB classifier with the partial_fit() method, since that would not require loading large chunks of data each time.
 
 ###Dependencies used in this project
 
@@ -83,7 +73,10 @@ This project has a single interface for the user to use. To use the program:
     python3 run_app.py scrape_steam new
 
     #Continue classifying data
-    python3 run_app.py classify_data
+    python3 run_app.py classify_data continue
+
+    #Continue classifying data
+    python3 run_app.py classify_data new
 
     #Get statistics from classification data
     python3 run_app.py make_report
@@ -116,7 +109,7 @@ Of course the people who made Requests, BeautifulSoup4, Scikit-learn, Scipy and 
 
 ###Final thoughts - I like TDD
 
-I'm really happy with how this turned out. I used test driven development throughout this project, where I could. Most tests were written first, failed, then made to work.
+I used test driven development throughout this project, where I could. Most tests were written first, failed, then made to work.
 
 I think TDD is good for writing a function that you've seen before. It helps you keep the function simple. It helps you slow down and think about what the function does and why rather than rushing in like a cowboy.
 
