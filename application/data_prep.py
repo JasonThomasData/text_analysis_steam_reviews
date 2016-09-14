@@ -15,7 +15,7 @@ import sqlite3
 import numpy as np
 
 
-def retrieve_reviews_balanced(db_location, reviews_to_train):
+def retrieve_reviews_balanced(db_location, reviews_to_retrieve):
     '''
     Retrieves an equal number of 'Recommended' and 'Not Recommended' reviews rows. 
     These are the entire rows from the db.
@@ -24,7 +24,7 @@ def retrieve_reviews_balanced(db_location, reviews_to_train):
     then the total number of reviews to process should be no larger than double that.
     '''
 
-    review_quantity = int(reviews_to_train / 2)
+    review_quantity = int(reviews_to_retrieve / 2)
     
     recommended_reviews = database_manager.retrieve_steam_reviews(db_location, 'Recommended', 0, review_quantity)
     not_recommended_reviews = database_manager.retrieve_steam_reviews(db_location, 'Not Recommended', 0, review_quantity)
@@ -32,17 +32,17 @@ def retrieve_reviews_balanced(db_location, reviews_to_train):
     return recommended_reviews, not_recommended_reviews
 
 
-def form_training_test_lists(recommended_reviews, not_recommended_reviews, interval):
+def form_training_test_lists(recommended_reviews, not_recommended_reviews, reviews_to_test):
     '''
     We need traing and test lists. The training_data must be half made of 'Recommeded'
     and 'Not Recommended' reviews. So too must the test_data.
-    The test data must be the size of the interval.
+    The test data must be the size of the reviews_to_test.
     '''
 
-    interval_split = int(interval / 2)
+    reviews_to_test_split = int(reviews_to_test / 2)
 
-    training_data = recommended_reviews[interval_split:] + not_recommended_reviews[interval_split:]
-    testing_data = recommended_reviews[:interval_split] + not_recommended_reviews[:interval_split]
+    training_data = recommended_reviews[reviews_to_test_split:] + not_recommended_reviews[reviews_to_test_split:]
+    testing_data = recommended_reviews[:reviews_to_test_split] + not_recommended_reviews[:reviews_to_test_split]
 
     return training_data, testing_data
 
@@ -83,17 +83,18 @@ def extract_reviews(training_data_transposed, testing_data_transposed):
     return training_data_documents, testing_data_documents
 
 
-def prep_for_classifiers(db_location):
+def prep_for_classifiers(db_location, reviews_to_retrieve, reviews_to_test):
     '''
     The intention is to retrive lists that are increasingly large.
     The data retrieved must be balanced, so this means retrieving an equal number of Recommended and Not Recommended reviews.
-    The interval is the number of data to classify each iteration, to test the classifier.
+    The reviews_to_retrieve include the test and training data for this epoch, to be split into other parts in another function.
+    The reviews_to_test is the number of data to classify each iteration, to test the classifier.
     This controller function is called by the train_classify_data module.
     '''
 
-    recommended_reviews, not_recommended_reviews = retrieve_reviews_balanced(db_location, reviews_to_train)
+    recommended_reviews, not_recommended_reviews = retrieve_reviews_balanced(db_location, reviews_to_retrieve)
 
-    training_data, testing_data = form_training_test_lists(recommended_reviews, not_recommended_reviews, interval)
+    training_data, testing_data = form_training_test_lists(recommended_reviews, not_recommended_reviews, reviews_to_test)
 
     training_data_transposed, testing_data_transposed = transpose_data(training_data, testing_data)
 
