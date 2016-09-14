@@ -5,14 +5,15 @@ from application import data_prep
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 from sklearn.svm import SVC, LinearSVC
-from sklearn.naive_bayes import MultinomialNB, GaussianNB
+from sklearn.naive_bayes import MultinomialNB
 from sklearn.linear_model import LogisticRegression
 
 from sklearn.metrics import classification_report
 
-def train_mnd(training_vectors, training_classes):
+
+def train_classifier(classifier, training_vectors, training_classes):
     '''
-    Trains the Multinomial Naive Bayes classifier and returns the result, so we can test it.
+    Trains a classifier and returns the result, so we can test it.
     '''
 
     classifier_mnb = MultinomialNB()
@@ -37,6 +38,15 @@ def train_linear_svc(training_vectors, training_classes):
     classifier_linear_svc.fit(training_vectors, training_classes)
     return classifier_linear_svc
 
+def train_logistic_regression(training_vectors, training_classes):
+    '''
+    Trains the Logistic Regression classifier and returns the result, so we can test it.
+    '''
+
+    classifier_logistic_regression = LogisticRegression()
+    classifier_logistic_regression.fit(training_vectors, training_classes)
+    return classifier_logistic_regression
+
 def classify_reviews(db_location):
     '''
     This is the function to control this module, but it would take some time to run through the data, and I'm not sure how to test it.
@@ -60,3 +70,6 @@ def classify_reviews(db_location):
         trained_mnd = train_mnd(training_vectors, training_classes)
         trained_svc = train_svc(training_vectors, training_classes)
         trained_linear_svc = train_svc(training_vectors, training_classes)
+        trained_logistic_regression = train_logistic_regression(training_vectors, training_classes)
+
+        print('Training classifiers with %s reviews, testing with %s reviews' %(reviews_to_train, reviews_to_test))
