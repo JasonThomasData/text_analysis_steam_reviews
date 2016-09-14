@@ -5,7 +5,7 @@ For some reason, these classifiers have performed badly. I don't know why that i
 I'm going to use the partial fit method with the MultinomialNB and save the instance 
 '''
 
-from application import data_prep
+from archive import data_prep
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 

@@ -1,7 +1,9 @@
 #! usr/bin/env python3
 
 import unittest, sqlite3, os, atexit
-from application import database_manager, scraper, data_prep, train_classify_data
+from application import database_manager, scraper
+
+from archive import data_prep, train_classify_data
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 
@@ -12,7 +14,6 @@ def goodbye():
         os.remove('database_test.db')
     except FileNotFoundError:
         pass
-
 
 """
 These first tests are for the database_manager module. We need the DB before scraping any data.
@@ -373,7 +374,6 @@ class TestScraperDeleteDuplicateReviews(unittest.TestCase):
         except TypeError:
             assert False #this means the responses are not dicts, which means this fails
 
-
 """
 These tests are for the data_prep module.
 """
@@ -700,164 +700,13 @@ class TestMnbClassifier(unittest.TestCase):
         negative_test_vector = vectorizer.transform(['It was bad'])
         positive_test_vector = vectorizer.transform(['It was great'])
 
-        classifier = train_classify_data.train_mnd(train_vectors, training_classes)
+        classifier = train_classify_data.train_mnb(train_vectors, training_classes)
 
         prediction_one = classifier.predict(negative_test_vector)
         prediction_two = classifier.predict(positive_test_vector)
 
         assert prediction_one == 'Not Recommended'
         assert prediction_two == 'Recommended'
-
-
-class TestSvcClassifier(unittest.TestCase):
-    '''
-    Test this function returns a trained svc classifier.
-    We'll test this against data we've trained.
-    '''
-
-    def setUp(self):
-        db_location = 'database_test.db'
-        database_manager.create_steam_reviews(db_location)
-        database_manager.insert_data_steam_reviews(db_location, 'url_2', 300020, '2011-01-01', 0, 'Not Recommended', 'It was bad', 'Dismantler')
-        database_manager.insert_data_steam_reviews(db_location, 'url_2', 300020, '2011-01-01', 0, 'Not Recommended', 'It was bad', 'Dismantler')
-        database_manager.insert_data_steam_reviews(db_location, 'url_2', 300020, '2011-01-01', 0, 'Not Recommended', 'It was bad', 'Dismantler')
-        database_manager.insert_data_steam_reviews(db_location, 'url_2', 300020, '2011-01-01', 0, 'Not Recommended', 'It was bad', 'Dismantler')
-        database_manager.insert_data_steam_reviews(db_location, 'url_2', 300020, '2011-01-01', 0, 'Not Recommended', 'It was bad', 'Dismantler')
-        database_manager.insert_data_steam_reviews(db_location, 'url_2', 300020, '2011-01-01', 0, 'Not Recommended', 'It was bad', 'Dismantler')
-        database_manager.insert_data_steam_reviews(db_location, 'url_2', 300020, '2011-01-01', 0, 'Not Recommended', 'It was bad', 'Dismantler')
-        database_manager.insert_data_steam_reviews(db_location, 'url_2', 300020, '2011-01-01', 0, 'Not Recommended', 'It was bad', 'Dismantler')
-        database_manager.insert_data_steam_reviews(db_location, 'url_9', 300040, '2011-01-01', 0, 'Recommended', 'It was great', 'GiveMeSugar')
-        database_manager.insert_data_steam_reviews(db_location, 'url_9', 300040, '2011-01-01', 0, 'Recommended', 'It was great', 'GiveMeSugar')
-        database_manager.insert_data_steam_reviews(db_location, 'url_9', 300040, '2011-01-01', 0, 'Recommended', 'It was great', 'GiveMeSugar')
-        database_manager.insert_data_steam_reviews(db_location, 'url_9', 300040, '2011-01-01', 0, 'Recommended', 'It was great', 'GiveMeSugar')
-        database_manager.insert_data_steam_reviews(db_location, 'url_9', 300040, '2011-01-01', 0, 'Recommended', 'It was great', 'GiveMeSugar')
-        database_manager.insert_data_steam_reviews(db_location, 'url_9', 300040, '2011-01-01', 0, 'Recommended', 'It was great', 'GiveMeSugar')
-        database_manager.insert_data_steam_reviews(db_location, 'url_9', 300040, '2011-01-01', 0, 'Recommended', 'It was great', 'GiveMeSugar')
-        database_manager.insert_data_steam_reviews(db_location, 'url_9', 300040, '2011-01-01', 0, 'Recommended', 'It was great', 'GiveMeSugar')
-
-    def tearDown(self):
-        db_location = 'database_test.db'
-        database_manager.drop_steam_reviews(db_location)
-
-    def test(self):
-        db_location = 'database_test.db'
-        reviews_to_retrieve = 16
-        reviews_to_test = 4
-        training_documents, testing_documents, training_classes, testing_classes = data_prep.prep_for_classifiers(db_location, reviews_to_retrieve, reviews_to_test)
-
-        vectorizer = TfidfVectorizer()
-        train_vectors = vectorizer.fit_transform(training_documents)
-        negative_test_vector = vectorizer.transform(['It was bad'])
-        positive_test_vector = vectorizer.transform(['It was great'])
-
-        classifier = train_classify_data.train_svc(train_vectors, training_classes)
-
-        prediction_one = classifier.predict(negative_test_vector)
-        prediction_two = classifier.predict(positive_test_vector)
-
-        assert prediction_one == 'Not Recommended'
-        assert prediction_two == 'Recommended'
-
-
-class TestLinearSvcClassifier(unittest.TestCase):
-    '''
-    Test this function returns a trained linear svc classifier.
-    We'll test this against data we've trained.
-    '''
-
-    def setUp(self):
-        db_location = 'database_test.db'
-        database_manager.create_steam_reviews(db_location)
-        database_manager.insert_data_steam_reviews(db_location, 'url_2', 300020, '2011-01-01', 0, 'Not Recommended', 'It was bad', 'Dismantler')
-        database_manager.insert_data_steam_reviews(db_location, 'url_2', 300020, '2011-01-01', 0, 'Not Recommended', 'It was bad', 'Dismantler')
-        database_manager.insert_data_steam_reviews(db_location, 'url_2', 300020, '2011-01-01', 0, 'Not Recommended', 'It was bad', 'Dismantler')
-        database_manager.insert_data_steam_reviews(db_location, 'url_2', 300020, '2011-01-01', 0, 'Not Recommended', 'It was bad', 'Dismantler')
-        database_manager.insert_data_steam_reviews(db_location, 'url_2', 300020, '2011-01-01', 0, 'Not Recommended', 'It was bad', 'Dismantler')
-        database_manager.insert_data_steam_reviews(db_location, 'url_2', 300020, '2011-01-01', 0, 'Not Recommended', 'It was bad', 'Dismantler')
-        database_manager.insert_data_steam_reviews(db_location, 'url_2', 300020, '2011-01-01', 0, 'Not Recommended', 'It was bad', 'Dismantler')
-        database_manager.insert_data_steam_reviews(db_location, 'url_2', 300020, '2011-01-01', 0, 'Not Recommended', 'It was bad', 'Dismantler')
-        database_manager.insert_data_steam_reviews(db_location, 'url_9', 300040, '2011-01-01', 0, 'Recommended', 'It was great', 'GiveMeSugar')
-        database_manager.insert_data_steam_reviews(db_location, 'url_9', 300040, '2011-01-01', 0, 'Recommended', 'It was great', 'GiveMeSugar')
-        database_manager.insert_data_steam_reviews(db_location, 'url_9', 300040, '2011-01-01', 0, 'Recommended', 'It was great', 'GiveMeSugar')
-        database_manager.insert_data_steam_reviews(db_location, 'url_9', 300040, '2011-01-01', 0, 'Recommended', 'It was great', 'GiveMeSugar')
-        database_manager.insert_data_steam_reviews(db_location, 'url_9', 300040, '2011-01-01', 0, 'Recommended', 'It was great', 'GiveMeSugar')
-        database_manager.insert_data_steam_reviews(db_location, 'url_9', 300040, '2011-01-01', 0, 'Recommended', 'It was great', 'GiveMeSugar')
-        database_manager.insert_data_steam_reviews(db_location, 'url_9', 300040, '2011-01-01', 0, 'Recommended', 'It was great', 'GiveMeSugar')
-        database_manager.insert_data_steam_reviews(db_location, 'url_9', 300040, '2011-01-01', 0, 'Recommended', 'It was great', 'GiveMeSugar')
-
-    def tearDown(self):
-        db_location = 'database_test.db'
-        database_manager.drop_steam_reviews(db_location)
-
-    def test(self):
-        db_location = 'database_test.db'
-        reviews_to_retrieve = 16
-        reviews_to_test = 4
-        training_documents, testing_documents, training_classes, testing_classes = data_prep.prep_for_classifiers(db_location, reviews_to_retrieve, reviews_to_test)
-
-        vectorizer = TfidfVectorizer()
-        train_vectors = vectorizer.fit_transform(training_documents)
-        negative_test_vector = vectorizer.transform(['It was bad'])
-        positive_test_vector = vectorizer.transform(['It was great'])
-
-        classifier = train_classify_data.train_linear_svc(train_vectors, training_classes)
-
-        prediction_one = classifier.predict(negative_test_vector)
-        prediction_two = classifier.predict(positive_test_vector)
-
-        assert prediction_one == 'Not Recommended'
-        assert prediction_two == 'Recommended'
-
-
-class TestLogisticRegressionClassifier(unittest.TestCase):
-    '''
-    Test this function returns a trained logistic regression classifier.
-    We'll test this against data we've trained.
-    '''
-
-    def setUp(self):
-        db_location = 'database_test.db'
-        database_manager.create_steam_reviews(db_location)
-        database_manager.insert_data_steam_reviews(db_location, 'url_2', 300020, '2011-01-01', 0, 'Not Recommended', 'It was bad', 'Dismantler')
-        database_manager.insert_data_steam_reviews(db_location, 'url_2', 300020, '2011-01-01', 0, 'Not Recommended', 'It was bad', 'Dismantler')
-        database_manager.insert_data_steam_reviews(db_location, 'url_2', 300020, '2011-01-01', 0, 'Not Recommended', 'It was bad', 'Dismantler')
-        database_manager.insert_data_steam_reviews(db_location, 'url_2', 300020, '2011-01-01', 0, 'Not Recommended', 'It was bad', 'Dismantler')
-        database_manager.insert_data_steam_reviews(db_location, 'url_2', 300020, '2011-01-01', 0, 'Not Recommended', 'It was bad', 'Dismantler')
-        database_manager.insert_data_steam_reviews(db_location, 'url_2', 300020, '2011-01-01', 0, 'Not Recommended', 'It was bad', 'Dismantler')
-        database_manager.insert_data_steam_reviews(db_location, 'url_2', 300020, '2011-01-01', 0, 'Not Recommended', 'It was bad', 'Dismantler')
-        database_manager.insert_data_steam_reviews(db_location, 'url_2', 300020, '2011-01-01', 0, 'Not Recommended', 'It was bad', 'Dismantler')
-        database_manager.insert_data_steam_reviews(db_location, 'url_9', 300040, '2011-01-01', 0, 'Recommended', 'It was great', 'GiveMeSugar')
-        database_manager.insert_data_steam_reviews(db_location, 'url_9', 300040, '2011-01-01', 0, 'Recommended', 'It was great', 'GiveMeSugar')
-        database_manager.insert_data_steam_reviews(db_location, 'url_9', 300040, '2011-01-01', 0, 'Recommended', 'It was great', 'GiveMeSugar')
-        database_manager.insert_data_steam_reviews(db_location, 'url_9', 300040, '2011-01-01', 0, 'Recommended', 'It was great', 'GiveMeSugar')
-        database_manager.insert_data_steam_reviews(db_location, 'url_9', 300040, '2011-01-01', 0, 'Recommended', 'It was great', 'GiveMeSugar')
-        database_manager.insert_data_steam_reviews(db_location, 'url_9', 300040, '2011-01-01', 0, 'Recommended', 'It was great', 'GiveMeSugar')
-        database_manager.insert_data_steam_reviews(db_location, 'url_9', 300040, '2011-01-01', 0, 'Recommended', 'It was great', 'GiveMeSugar')
-        database_manager.insert_data_steam_reviews(db_location, 'url_9', 300040, '2011-01-01', 0, 'Recommended', 'It was great', 'GiveMeSugar')
-
-    def tearDown(self):
-        db_location = 'database_test.db'
-        database_manager.drop_steam_reviews(db_location)
-
-    def test(self):
-        db_location = 'database_test.db'
-        reviews_to_retrieve = 16
-        reviews_to_test = 4
-        training_documents, testing_documents, training_classes, testing_classes = data_prep.prep_for_classifiers(db_location, reviews_to_retrieve, reviews_to_test)
-
-        vectorizer = TfidfVectorizer()
-        train_vectors = vectorizer.fit_transform(training_documents)
-        negative_test_vector = vectorizer.transform(['It was bad'])
-        positive_test_vector = vectorizer.transform(['It was great'])
-
-        classifier = train_classify_data.train_logistic_regression(train_vectors, training_classes)
-
-        prediction_one = classifier.predict(negative_test_vector)
-        prediction_two = classifier.predict(positive_test_vector)
-
-        assert prediction_one == 'Not Recommended'
-        assert prediction_two == 'Recommended'
-
 
 if __name__ == '__main__':
     unittest.main()
