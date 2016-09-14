@@ -28,6 +28,15 @@ def train_svc(training_vectors, training_classes):
     classifier_svc.fit(training_vectors, training_classes)
     return classifier_svc
 
+def train_linear_svc(training_vectors, training_classes):
+    '''
+    Trains the Linear Scaled Vector Machine classifier and returns the result, so we can test it.
+    '''
+
+    classifier_linear_svc = LinearSVC()
+    classifier_linear_svc.fit(training_vectors, training_classes)
+    return classifier_linear_svc
+
 def classify_reviews(db_location):
     '''
     This is the function to control this module, but it would take some time to run through the data, and I'm not sure how to test it.
@@ -50,3 +59,4 @@ def classify_reviews(db_location):
 
         trained_mnd = train_mnd(training_vectors, training_classes)
         trained_svc = train_svc(training_vectors, training_classes)
+        trained_linear_svc = train_svc(training_vectors, training_classes)
