@@ -481,6 +481,78 @@ class TestDataPrepExtractClasses(unittest.TestCase):
         assert len(testing_data_documents) == 100
 
 
+class TestDataPrepControllerFunction1(unittest.TestCase):
+    '''
+    Tests the main controller function processes and returns data. Classifier module will use this.
+    '''
+
+    def setUp(self):
+        db_location = 'database_test.db'
+        database_manager.create_steam_reviews(db_location)
+        database_manager.insert_data_steam_reviews(db_location, 'url_1', 300000, '2011-01-01', 0, 'Not Recommended', 'It was great', 'Destroyer')
+        database_manager.insert_data_steam_reviews(db_location, 'url_2', 300020, '2011-01-01', 0, 'Not Recommended', 'It was bad', 'Dismantler')
+        database_manager.insert_data_steam_reviews(db_location, 'url_3', 300025, '2011-01-01', 0, 'Not Recommended', 'OMG', 'Makiavelli')
+        database_manager.insert_data_steam_reviews(db_location, 'url_4', 300040, '2011-01-01', 0, 'Not Recommended', 'I want to cry myself to sleep', 'GiveMeSugar')
+        database_manager.insert_data_steam_reviews(db_location, 'url_5', 300040, '2011-01-01', 0, 'Not Recommended', 'When I get out of this padded cell I will bake a cake', 'Sluggish666')
+        database_manager.insert_data_steam_reviews(db_location, 'url_6', 300000, '2011-01-01', 0, 'Recommended', 'It was great', 'Destroyer')
+        database_manager.insert_data_steam_reviews(db_location, 'url_7', 300020, '2011-01-01', 0, 'Recommended', 'It was bad', 'Dismantler')
+        database_manager.insert_data_steam_reviews(db_location, 'url_8', 300025, '2011-01-01', 0, 'Recommended', 'OMG', 'Makiavelli')
+        database_manager.insert_data_steam_reviews(db_location, 'url_9', 300040, '2011-01-01', 0, 'Recommended', 'I want to cry myself to sleep', 'GiveMeSugar')
+        database_manager.insert_data_steam_reviews(db_location, 'url_10', 300040, '2011-01-01', 0, 'Recommended', 'When I get out of this padded cell I will bake a cake', 'Sluggish666')
+
+    def tearDown(self):
+        db_location = 'database_test.db'
+        database_manager.drop_steam_reviews(db_location)
+
+    def test(self):
+        db_location = 'database_test.db'
+        reviews_to_retrieve = 8
+        reviews_to_test = 4
+        training_data_documents, testing_data_documents, training_data_classes, testing_data_classes = data_prep.prep_for_classifiers(db_location, reviews_to_retrieve, reviews_to_test)
+        assert len(training_data_documents) == 4
+        assert len(testing_data_documents) == 4
+        assert len(training_data_classes) == 4
+        assert len(testing_data_classes) == 4
+
+
+class TestDataPrepControllerFunction2(unittest.TestCase):
+    '''
+    Tests the main controller function processes and returns data. Classifier module will use this.
+    '''
+
+    def setUp(self):
+        db_location = 'database_test.db'
+        database_manager.create_steam_reviews(db_location)
+        database_manager.insert_data_steam_reviews(db_location, 'url_1', 300000, '2011-01-01', 0, 'Not Recommended', 'It was great', 'Destroyer')
+        database_manager.insert_data_steam_reviews(db_location, 'url_2', 300020, '2011-01-01', 0, 'Not Recommended', 'It was bad', 'Dismantler')
+        database_manager.insert_data_steam_reviews(db_location, 'url_3', 300025, '2011-01-01', 0, 'Not Recommended', 'OMG', 'Makiavelli')
+        database_manager.insert_data_steam_reviews(db_location, 'url_4', 300040, '2011-01-01', 0, 'Not Recommended', 'I want to cry myself to sleep', 'GiveMeSugar')
+        database_manager.insert_data_steam_reviews(db_location, 'url_5', 300040, '2011-01-01', 0, 'Not Recommended', 'When I get out of this padded cell I will bake a cake', 'Sluggish666')
+        database_manager.insert_data_steam_reviews(db_location, 'url_6', 300000, '2011-01-01', 0, 'Recommended', 'It was great', 'Destroyer')
+        database_manager.insert_data_steam_reviews(db_location, 'url_7', 300020, '2011-01-01', 0, 'Recommended', 'It was bad', 'Dismantler')
+        database_manager.insert_data_steam_reviews(db_location, 'url_8', 300025, '2011-01-01', 0, 'Recommended', 'OMG', 'Makiavelli')
+        database_manager.insert_data_steam_reviews(db_location, 'url_9', 300040, '2011-01-01', 0, 'Recommended', 'I want to cry myself to sleep', 'GiveMeSugar')
+        database_manager.insert_data_steam_reviews(db_location, 'url_10', 300040, '2011-01-01', 0, 'Recommended', 'When I get out of this padded cell I will bake a cake', 'Sluggish666')
+        database_manager.insert_data_steam_reviews(db_location, 'url_11', 300040, '2011-01-01', 0, 'Not Recommended', 'I want to cry myself to sleep', 'GiveMeSugar')
+        database_manager.insert_data_steam_reviews(db_location, 'url_12', 300040, '2011-01-01', 0, 'Not Recommended', 'When I get out of this padded cell I will bake a cake', 'Sluggish666')
+        database_manager.insert_data_steam_reviews(db_location, 'url_13', 300000, '2011-01-01', 0, 'Recommended', 'It was great', 'Destroyer')
+        database_manager.insert_data_steam_reviews(db_location, 'url_14', 300020, '2011-01-01', 0, 'Recommended', 'It was bad', 'Dismantler')
+
+
+    def tearDown(self):
+        db_location = 'database_test.db'
+        database_manager.drop_steam_reviews(db_location)
+
+    def test(self):
+        db_location = 'database_test.db'
+        reviews_to_retrieve = 12
+        reviews_to_test = 4
+        training_data_documents, testing_data_documents, training_data_classes, testing_data_classes = data_prep.prep_for_classifiers(db_location, reviews_to_retrieve, reviews_to_test)
+        assert len(training_data_documents) == 8
+        assert len(testing_data_documents) == 4
+        assert len(training_data_classes) == 8
+        assert len(testing_data_classes) == 4
+
 """
 These tests check the scraper is taking content down from the web as it should.
 """
@@ -577,6 +649,12 @@ class TestScraperReviewFormatting(unittest.TestCase):
         assert len(reviews[0]['user_recommendation']) > 0
         assert len(reviews[0]['user_review_text']) > 0
         assert len(reviews[0]['user_name']) > 0
+
+"""
+These tests make sure the classifier module works properly.
+"""
+
+
 
 if __name__ == '__main__':
     unittest.main()
