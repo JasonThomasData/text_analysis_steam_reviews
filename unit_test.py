@@ -296,7 +296,7 @@ class TestRetrieveLastRow(unittest.TestCase):
 
     def test(self):
         db_location = 'database_test.db'
-        response = database_manager.retrieve_last_steam_reviews(db_location)
+        response = database_manager.retrieve_last_steam_review(db_location)
         assert response == (3, 'url_3', 300025, '2011-01-01', 0, 'Recommended', 'OMG', 'Makiavelli')
 
     def tearDown(self):
@@ -616,7 +616,7 @@ class TestScraperDetectRecommended(unittest.TestCase):
 
     def test(self):
         image_link_string = '<img height="40" src="http://store.akamai.steamstatic.com/public/shared/images/userreviews/icon_thumbsUp_v6.png" width="40"></img></div>'
-        assert scraper.get_recommendation_from_image_link(image_link_string) == 'Recommended'
+        assert scraper.get_image_link_recommendation(image_link_string) == 'Recommended'
 
 
 class TestScraperDetectNotRecommended(unittest.TestCase):
@@ -627,7 +627,7 @@ class TestScraperDetectNotRecommended(unittest.TestCase):
 
     def test(self):
         image_link_string = '<img height="40" src="http://store.akamai.steamstatic.com/public/shared/images/userreviews/icon_thumbsDown_v6.png" width="40"></img></div>'
-        assert scraper.get_recommendation_from_image_link(image_link_string) == 'Not Recommended'
+        assert scraper.get_image_link_recommendation(image_link_string) == 'Not Recommended'
 
 
 class TestScraperNoRecommendationDetected(unittest.TestCase):
@@ -638,7 +638,7 @@ class TestScraperNoRecommendationDetected(unittest.TestCase):
 
     def test(self):
         image_link_string = '<img height="40" src="http://store.akamai.steamstatic.com/public/shared/images/userreviews/icon_thumbsSideways_v6.png" width="40"></img></div>'
-        assert scraper.get_recommendation_from_image_link(image_link_string) == 'Issue detecting recommendation'
+        assert scraper.get_image_link_recommendation(image_link_string) == 'Issue detecting recommendation'
 
 
 class TestScraperReviewFormatting(unittest.TestCase):

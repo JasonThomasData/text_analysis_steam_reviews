@@ -5,7 +5,8 @@ import sys
 from application import scraper, database_manager, train_classify_data
 
 if int(sys.version_info.major) < 3:
-    sys.stdout.write('You must use Python3 with this program, exiting... \n')
+    python_required_message = 'You must use Python3 with this program, exiting... \n'
+    sys.stdout.write(python_required_message)
     sys.exit()
 
 
@@ -23,7 +24,7 @@ def inputs_feedback():
 
 def process_inputs(inputs):
     '''
-    Check the inputs are valid and load the appropriate functions.
+    Check the inputs are valid call load the appropriate functions.
     '''
 
     db_location = 'database_steam_reviews.db'
