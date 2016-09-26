@@ -93,9 +93,7 @@ For this reason, the majority of functions in this project have tests. There are
 
 To run the tests, got to the terminal and type:
 
-    python3 unit_test.py
-
-I've put all tests in one file. You can shift them around if you like because they all setUp() and tearDown() their own requirements.
+    python3 -m unittest discover tests/
 
 An internet connection is required for the tests to pass, since some tests scrape steam.
 
@@ -116,3 +114,4 @@ I think TDD is good for writing a function that you've seen before. It helps you
 The circumstance where I wouldn't use TDD is where I'm exploring a new concept and just don't know what to expect. Some of this code was fleshing out ideas and exploring new things, and for that, I didn't find TDD very helpful.
 
 I've effectively managed complexity within this project by focussing on keeping things simple. The modular design has really helped, as has the TDD.
+
